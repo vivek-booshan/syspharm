@@ -1,6 +1,6 @@
 clear;
 
-p.kon  = 0.25 / 50;
+p.kon  = 0.005;
 p.koff = 0.25;
 
 p.kt1  = 1.0;
