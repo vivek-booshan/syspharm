@@ -48,7 +48,7 @@ p.V = 0.31; % units: L
 % source - https://reference.medscape.com/calculator/648/estimated-blood-volume
 
 p.kcH  =  .462 ; % units: 1/hr 
-p.kcP  = 0.462 ; %5.63  ; % units: 1/hr 
+p.kcP  = 5.63  ; % units: 1/hr 
 p.kcPH = 9.24  ; % units: 1/hr 
 % These "kcX" are the clearance rate constants for heparin, protamine 
 % and the heparin-protamine complex.
