@@ -1,4 +1,4 @@
-clear all;
+clear;
 % This program runs multiple simulations of the heparin-protamine system,
 % using equations listed in a separate function/file.
 
