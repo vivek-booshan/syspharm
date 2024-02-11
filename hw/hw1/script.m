@@ -129,9 +129,3 @@ title("Mass Balance");
 
 xlabel(fig, "time (hrs)");
 ylabel(fig, "Concentration [nmol]")
-% han = axes(fig1, 'Visible', 'off');
-% han.Title.Visible = 'on';
-% han.XLabel.Visible = 'on';
-% han.YLabel.Visible = 'on';
-% ylabel(han, "Concentration [nmol]");
-% xlabel(han, "time (hrs)");
