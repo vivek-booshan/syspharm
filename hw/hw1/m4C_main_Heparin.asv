@@ -58,10 +58,10 @@ sim3 = Model(p, y0);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%       Plotting          %%%
 % fig1 = figure;
-fig = tiledlayout(3, 2);
+t = tiledlayout('flow');
 series_name = ["0.96 nmol", "9.6 nmol", "96 nmol"];
 % ax1 = subplot(3, 2, 1);
-nexttile
+nexttile;
 plot(...       
     t, y1(:, 1), ...
     t, y2(:, 1), ...
@@ -106,9 +106,8 @@ plot(... ax4, ...
 legend(series_name);
 title("Concentration of Free Drug in Small Tumor");
 
-% ax5 = subplot(3, 2, 5);
-nexttile;
-plot(...ax5, ...
+ax5 = subplot(3, 2, 5);
+plot(ax5, ...
     t, y1(:, 6), ...
     t, y2(:, 6), ...
     t, y3(:, 6), ...
@@ -117,8 +116,8 @@ plot(...ax5, ...
 legend(series_name);
 title("Concentration of Free Drug in Body");
 
-nexttile %ax6 = subplot(3, 2, 6);
-plot(... %ax6, ...
+ax6 = subplot(3, 2, 6);
+plot(ax6, ...
     t, b1, ...
     t, b2, ...
     t, b3, ...
@@ -127,11 +126,9 @@ plot(... %ax6, ...
 legend(series_name);
 title("Mass Balance");
 
-xlabel(fig, "time (hrs)");
-ylabel(fig, "Concentration [nmol]")
-% han = axes(fig1, 'Visible', 'off');
-% han.Title.Visible = 'on';
-% han.XLabel.Visible = 'on';
-% han.YLabel.Visible = 'on';
-% ylabel(han, "Concentration [nmol]");
-% xlabel(han, "time (hrs)");
+han = axes(fig1, 'Visible', 'off');
+han.Title.Visible = 'on';
+han.XLabel.Visible = 'on';
+han.YLabel.Visible = 'on';
+ylabel(han, "Concentration [nmol]");
+xlabel(han, "time (hrs)");
