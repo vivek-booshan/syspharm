@@ -1,12 +1,16 @@
 classdef Model
 
     properties
-        params
-        ics
+        params struct
+        ics (1, :) {mustBeNumeric}
     end
 
     methods
         function obj = Model(p, y0)
+            arguments
+                p struct
+                y0 (1, 7) {mustBeNumeric, mustBeReal}
+            end
             obj.params = p;
             obj.ics = y0;
         end
@@ -48,21 +52,49 @@ classdef Model
             balance = obj.ics(1) * obj.params.vbp - solution(:, 1:6)*volumes'; %sum(drug_mass, 2);
         end
 
-        function [t, solution, balance] = repeated_bolus(obj, tmax, freq, step)
-            t = zeros(freq / step + 1, tmax/freq);
-            solution = zeros(freq / step + 1, length(obj.ics), tmax/freq);
-            balance = zeros(freq / step + 1, tmax/freq);
-            
+        function [time, solution, balance] = repeated_bolus(obj, D0, tmax, freq, step, rate_adjust)
+            arguments
+                obj Model
+                D0 double 
+                tmax (1, :) {mustBeNumeric, mustBeReal}
+                freq double
+                step double
+                rate_adjust logical = 1
+            end
+            time = [];
+            solution = [];
+            balance = [];
+            y0 = obj.ics;
+            p = obj.params;
+            volumes = [p.vbp, p.vbp, p.vt1, p.vt2, p.vb, 1];
             for i = 1:tmax/freq
-                [t(:, i), solution(:, :, i), balance(:, i)] = obj.get_solution((i-1)*freq:step:i*freq);
-                % balance(:, i) = balance(:, i) + (i-1)*264;
-                obj.ics = solution(end, :, i);
+                options = odeset( ...
+                    'MaxStep', 5e-2, ...
+                    'AbsTol', 1e-5, ...
+                    'RelTol', 1e-5, ...
+                    'InitialStep', 1e-2 ...
+                );
+                [t, y] = ode45(@obj.heparinODE, (i-1)*freq:step:i*freq, y0, options, obj.params, rate_adjust);
+                b = obj.ics(1)*obj.params.vbp - y(:, 1:6)*volumes';
+                time = [time; t];
+                solution = [solution; y];
+                balance = [balance; b];
+                
+                y0 = y(end, :);
+                y0(1) = y0(1) + D0;
             end
         end
     end
     
     methods (Access = private)
         function dydt = heparinODE(obj, t, y, p, ra)
+            arguments
+                obj Model
+                t (1, :) {mustBeNumeric}
+                y (1, 7) {mustBeNumeric}
+                p struct
+                ra logical
+            end
             % y1 = D_BP : blood plasma drug
             % y2 = DP : drug-protein complex
             % y3 = D_T1 : drug in tumor 1
