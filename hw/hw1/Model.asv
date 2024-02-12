@@ -8,8 +8,8 @@ classdef Model
     methods
         function obj = Model(p, y0)
             arguments
-                p struct %parameters of model
-                y0 (1, 7) {mustBeNumeric, mustBeReal} %initial conditions
+                p struct
+                y0 (1, 7) {mustBeNumeric, mustBeReal}
             end
             obj.params = p;
             obj.ics = y0;
@@ -18,8 +18,8 @@ classdef Model
         function [t, solution, balance] = get_solution(obj, time, rate_adjust)
             arguments
                 obj Model
-                time (1, :) {mustBeNumeric} %time range
-                rate_adjust logical = 1 % boolean for rate adjusted ode
+                time (1, :) {mustBeNumeric}
+                rate_adjust logical = 1
             end
             options = odeset( ...
                 'MaxStep', 5e-2, ...
@@ -50,11 +50,11 @@ classdef Model
         function [time, solution, balance] = repeated_bolus(obj, D0, tmax, freq, step, rate_adjust)
             arguments
                 obj Model
-                D0 double % Bolus in nmol
-                tmax double % length of sim (hrs)
-                freq double % frequency of dose (hrs)
-                step double % resolution
-                rate_adjust logical = 1 % boolean for rate adjusted ode
+                D0 double 
+                tmax (1, :) {mustBeNumeric, mustBeReal}
+                freq double
+                step double
+                rate_adjust logical = 1
             end
             time = [];
             solution = [];
@@ -89,15 +89,15 @@ classdef Model
     end
     
     methods (Access = private)
-        function dydt = heparinODE(obj, time, y, parameters, rate_adjust)
+        function dydt = heparinODE(obj, t, y, p, ra)
             arguments
                 obj Model
-                time (1, :) {mustBeNumeric}
-                y (1, 7) {mustBeNumeric} 
-                parameters struct
-                rate_adjust logical
+                t (1, :) {mustBeNumeric}
+                y (1, 7) {mustBeNumeric}
+                p struct
+                ra logical
             end
-            dydt = heparinODE(time, y, parameters, rate_adjust);
+            dydt = heparinODE(t, y, p, ra);
 
         end
     end
