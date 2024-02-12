@@ -23,15 +23,22 @@ p.vb   = 45 * 0.15;
 P0 = 100;
 
 %% Q2e
-% q2e
+figure(1)
+q2e
+sgtitle("q2e");
 
 %% Q2f
-% q2f
+figure(2);
+q2f
+sgtitle("q2f");
 
 %% Q2g
-q2gf
-
+figure(3)
+q2gh
+sgtitle("q2g");
 %% Q2f
-% p.kt1 = 0.01;
-% p.kt2 = 0.01;
-% q2gf
+figure(4)
+p.kt1 = 0.01;
+p.kt2 = 0.01;
+q2gh
+sgtitle("q2h");
