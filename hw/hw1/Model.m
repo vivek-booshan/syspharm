@@ -77,7 +77,7 @@ classdef Model
                     obj.params, ...
                     rate_adjust ...
                 );
-                b = y0(1)*p.vbp - y(:, 1:6)*volumes';
+                b = i*D0*p.vbp - y(:, 1:6)*volumes';
                 time = [time; t];
                 solution = [solution; y];
                 balance = [balance; b];
