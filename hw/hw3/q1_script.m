@@ -58,7 +58,8 @@ function error = caffeine_error(t_measured, y_measured, y0, p)
 
     for subject = 1:max_subjects       
         [t, y] = ode45(@(t,y) Caffeine_eqns(t, y, p), t_measured, y0);
-        y_interp = interp1(t, y(:, 1), t_measured);
-        error = error + sum((y_interp(:) - y_measured(:, subject)).^2);
+        % y_interp = interp1(t, y(:, 1), t_measured);
+        % error = error + sum((y_interp(:) - y_measured(:, subject)).^2);
+        error = error + sum((y(:, 1) - y_measured(:, subject)).^2);
     end
 end

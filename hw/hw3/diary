@@ -1,0 +1,51 @@
+q1_script
+    5.9413    5.9413    5.9413    5.9413    5.9413
+    0.1386    0.1386    0.1386    0.1386    0.1386
+   66.6000   76.8000   85.8000  118.2000  133.2000
+    0.6000    0.6000    0.6000    0.6000    0.6000
+
+
+<a href = "matlab: helpview('optim','local_min_possible_lsq','CSHelpWindow');">Local minimum possible</a>.
+
+lsqnonlin stopped because the final change in the sum of squares relative to 
+its initial value is less than the value of the <a href = "matlab: helpview('optim','function_tolerance_lsq','CSHelpWindow');">function tolerance</a>.
+
+<<a href = "matlab: createExitMsg({'optimlib:snls:Exit3basic','lsqnonlin'},{'optimlib:snls:Exit3detailed','1.000000e-06'},true,true);;">stopping criteria details</a>>
+Patient 1   -0.0000    0.0186   66.3965    5.9413
+
+
+<a href = "matlab: helpview('optim','solver_stopped_premature','CSHelpWindow');">Solver stopped prematurely</a>.
+
+lsqnonlin stopped because it exceeded the iteration limit,
+<a href = "matlab: helpview('optim','max_iter','CSHelpWindow');">options.MaxIterations</a> = 4.000000e+02.
+
+Patient 2    0.0000   -0.0027   76.4944    5.9413
+
+
+<a href = "matlab: helpview('optim','local_min_possible_lsq','CSHelpWindow');">Local minimum possible</a>.
+
+lsqnonlin stopped because the final change in the sum of squares relative to 
+its initial value is less than the value of the <a href = "matlab: helpview('optim','function_tolerance_lsq','CSHelpWindow');">function tolerance</a>.
+
+<<a href = "matlab: createExitMsg({'optimlib:snls:Exit3basic','lsqnonlin'},{'optimlib:snls:Exit3detailed','1.000000e-06'},true,true);;">stopping criteria details</a>>
+Patient 3   -0.0000   -0.0180   85.7266    5.9413
+
+
+<a href = "matlab: helpview('optim','local_min_possible_lsq','CSHelpWindow');">Local minimum possible</a>.
+
+lsqnonlin stopped because the final change in the sum of squares relative to 
+its initial value is less than the value of the <a href = "matlab: helpview('optim','function_tolerance_lsq','CSHelpWindow');">function tolerance</a>.
+
+<<a href = "matlab: createExitMsg({'optimlib:snls:Exit3basic','lsqnonlin'},{'optimlib:snls:Exit3detailed','1.000000e-06'},true,true);;">stopping criteria details</a>>
+Patient 4    0.0000   -0.0653  118.0407    5.9413
+
+
+<a href = "matlab: helpview('optim','local_min_possible_lsq','CSHelpWindow');">Local minimum possible</a>.
+
+lsqnonlin stopped because the final change in the sum of squares relative to 
+its initial value is less than the value of the <a href = "matlab: helpview('optim','function_tolerance_lsq','CSHelpWindow');">function tolerance</a>.
+
+<<a href = "matlab: createExitMsg({'optimlib:snls:Exit3basic','lsqnonlin'},{'optimlib:snls:Exit3detailed','1.000000e-06'},true,true);;">stopping criteria details</a>>
+Patient 5   -0.0000   -0.0811  133.1968    5.9413
+
+diary off
