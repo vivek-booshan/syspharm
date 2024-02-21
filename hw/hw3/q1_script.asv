@@ -1,11 +1,25 @@
+%% 1a
+
 abs_halflife = 7/60; %from question
 cl_halflife = 5; %from prompt
+global ka
+global kcl
 ka = log(2) / abs_halflife;
 kcl = log(2) / cl_halflife;
  
 Vd = 0.6; % L / kg
 weights = [111, 128, 143, 197, 222]*0.45; %convert to kg
 V =  Vd * weights;
+
+table_1a = zeros(4, 5);
+table_1a(1, :) = ka;
+table_1a(2, :) = kcl;
+table_1a(3, :) = V;
+table_1a(4, :) = Vd;
+disp(table_1a);
+
+%% 1b
+
 
 t_real =[0.25, 0.5, 0.75, 2, 5, 8]; % measurements in hours since 11am
 y0 = [0, 0, 310]; % initial coffee @ 11am
@@ -18,22 +32,12 @@ y_real = [
     3.0, 1.7, 4.5, 1.7, 2.0; %07;00
 ]; % mg/L
 
-%% 1a
-
-table_1a = zeros(4, 5);
-table_1a(1, :) = ka;
-table_1a(2, :) = kcl;
-table_1a(3, :) = V;
-table_1a(4, :) = Vd;
-disp(table_1a);
-
-%% 1b
-
+% cost_function = @(params) sum((estimated_caffeine_levels(t_real, y0, params) - y_real(:, 1)));
+% caffeine_model = @(params) Caffeine_eqns(t, y0, params);
 table_1b = zeros(4, 5);
 for subject = 1:numel(V) 
     initial_guess_params = [0, kcl, V(subject), ka];
-    restrict = [1, 0, 0, 1];
-    caff_err = @(params) caffeineError(t_real, y_real(:, subject), y0, params, [1, 0, 0, 1], initial_guess_params);
+    caff_err = @(params) caffeine_error(t_real, y_real(:, subject), y0, params);
     options = optimoptions( ...
         'lsqnonlin', ...
         'Algorithm', 'levenberg-marquardt', ...
@@ -43,6 +47,8 @@ for subject = 1:numel(V)
     optim_params = lsqnonlin(caff_err, initial_guess_params, [], [], options);
     % toc
     table_1b(:, subject) = optim_params;
+    %fprintf('Patient %d', subject);
+    %disp(optim_params);
 end
 disp(table_1b)
 
@@ -52,14 +58,29 @@ disp(table_1b)
 table_1c = zeros(4, 5);
 for subject = 1:numel(V) 
     initial_guess_params = [0, kcl, V(subject), ka];
-    restrict = [1, 0, 0, 0];
-    caff_err = @(params) caffeineError(t_real, y_real(:, subject), y0, params, restrict, initial_guess_params);
+    caff_err = @(params) caffeine_error(t_real, y_real(:, subject), y0, params, restrict);
     options = optimoptions( ...
         'lsqnonlin', ...
         'Algorithm', 'levenberg-marquardt', ...
         'Display','none' ...
     );
+    % tic
     optim_params = lsqnonlin(caff_err, initial_guess_params, [], [], options);
-    table_1c(:, subject) = optim_params;
+    % toc
+    table_1b(:, subject) = optim_params;
+    %fprintf('Patient %d', subject);
+    %disp(optim_params);
 end
 disp(table_1c)
+
+function error = caffeine_error(t_measured, y_measured, y0, p, restrict)
+    if restrict
+        for i = 1:numel(restrict)
+            if restrict(i)
+                p(i) = 
+    error = 0;
+    % new_ode = @(t, y) Caffeine_eqns(t, y, [0, p(2), p(3), 5.94])
+    [t, y] = ode45(@(t, y) Caffeine_eqns(t, y, [0, p(2:end)]), t_measured, y0);
+    y_interp = interp1(t, y(:, 1), t_measured); % optimize for degr
+    error = error + sum((y_interp(:) - y_measured).^2);
+end
