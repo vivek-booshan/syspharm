@@ -20,6 +20,7 @@ y_real = [
 
 %% 1a
 
+% create subject table from previously calculated parameters
 table_1a = zeros(4, 5);
 table_1a(1, :) = ka;
 table_1a(2, :) = kcl;
@@ -30,25 +31,44 @@ disp('q1a');
 disp(table_1a);
 
 %% 1b 1c
+
 table = zeros(5, 5, 2);
+% solve for 1b and 1c
 for i = 1:2
+    % determine which parameters to restriction
+    % [q, kcl, V, ka]
     restrict = [1, 0, 0, mod(i, 2)];
+    %iterate through each subject
     for subject = 1:numel(V) 
-        initial_guess_params = [0, kcl, V(subject), ka];
-        % restrict = [1, 0, 0, 1];
-        caff_err = @(params) caffeineError(t_real, y_real(:, subject), y0, params, restrict, initial_guess_params);
-        options = optimoptions( ...
+        initial_guess_params = [0, kcl, V(subject), ka]; % initial guess
+        caff_err = @(params) caffeineError( ... % anon error function
+            t_real, ...
+            y_real(:, subject), ...
+            y0, ...
+            params, ...
+            restrict, ...
+            initial_guess_params ...
+        );
+        options = optimoptions( ... % use LM algo and hide displays
             'lsqnonlin', ...
             'Algorithm', 'levenberg-marquardt', ...
             'Display','none' ...
         );
         % tic
-        optim_params = lsqnonlin(caff_err, initial_guess_params, [], [], options);
+        optim_params = lsqnonlin( ... % solve lsqnonlin
+            caff_err, ...
+            initial_guess_params, ...
+            [], [], ...
+            options ...
+        );
         % toc
+        
+        % add Vd (L/kg) 
         table(:, subject, i) = [optim_params, optim_params(3) / weights(subject)];
     end
 end
 
+% assign respective tables and display
 table_1b = table(:, :, 1);
 table_1c = table(:, :, 2);
 
