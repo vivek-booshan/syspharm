@@ -25,41 +25,35 @@ table_1a(1, :) = ka;
 table_1a(2, :) = kcl;
 table_1a(3, :) = V;
 table_1a(4, :) = Vd;
+
+disp('q1a');
 disp(table_1a);
 
-%% 1b
-
-table_1b = zeros(4, 5);
-for subject = 1:numel(V) 
-    initial_guess_params = [0, kcl, V(subject), ka];
-    restrict = [1, 0, 0, 1];
-    caff_err = @(params) caffeineError(t_real, y_real(:, subject), y0, params, [1, 0, 0, 1], initial_guess_params);
-    options = optimoptions( ...
-        'lsqnonlin', ...
-        'Algorithm', 'levenberg-marquardt', ...
-        'Display','none' ...
-    );
-    % tic
-    optim_params = lsqnonlin(caff_err, initial_guess_params, [], [], options);
-    % toc
-    table_1b(:, subject) = optim_params;
+%% 1b 1c
+table = zeros(5, 5, 2);
+for i = 1:2
+    restrict = [1, 0, 0, mod(i, 2)];
+    for subject = 1:numel(V) 
+        initial_guess_params = [0, kcl, V(subject), ka];
+        % restrict = [1, 0, 0, 1];
+        caff_err = @(params) caffeineError(t_real, y_real(:, subject), y0, params, restrict, initial_guess_params);
+        options = optimoptions( ...
+            'lsqnonlin', ...
+            'Algorithm', 'levenberg-marquardt', ...
+            'Display','none' ...
+        );
+        % tic
+        optim_params = lsqnonlin(caff_err, initial_guess_params, [], [], options);
+        % toc
+        table(:, subject, i) = [optim_params, optim_params(3) / weights(subject)];
+    end
 end
-disp(table_1b)
 
+table_1b = table(:, :, 1);
+table_1c = table(:, :, 2);
 
-%% 1c
+disp('q1b');
+disp(table_1b);
 
-table_1c = zeros(4, 5);
-for subject = 1:numel(V) 
-    initial_guess_params = [0, kcl, V(subject), ka];
-    restrict = [1, 0, 0, 0];
-    caff_err = @(params) caffeineError(t_real, y_real(:, subject), y0, params, restrict, initial_guess_params);
-    options = optimoptions( ...
-        'lsqnonlin', ...
-        'Algorithm', 'levenberg-marquardt', ...
-        'Display','none' ...
-    );
-    optim_params = lsqnonlin(caff_err, initial_guess_params, [], [], options);
-    table_1c(:, subject) = optim_params;
-end
-disp(table_1c)
+disp('q1c');
+disp(table_1c);
