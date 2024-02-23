@@ -1,10 +1,8 @@
 function dydt = CaffeineODE(t, y, p)
 
-% q = 0;
 q = p(1);
 kc = p(2);
 V = p(3);
-% ka = log(2) / (7/60);
 ka = p(4);
 dydt = zeros(3, 1); %column vector
 
