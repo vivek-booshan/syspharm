@@ -2,7 +2,8 @@ abs_halflife = 7/60; %from question
 cl_halflife = 5; %from prompt
 ka = log(2) / abs_halflife;
 kcl = log(2) / cl_halflife;
- 
+
+q=0;
 Vd = 0.6; % L / kg
 weights = [111, 128, 143, 197, 222]*0.45; %convert to kg
 V =  Vd * weights;
@@ -22,22 +23,29 @@ y_real = [
 
 % create subject table from previously calculated parameters
 table_1a = zeros(4, 5);
-table_1a(1, :) = ka;
+
+table_1a(1, :) = q;
 table_1a(2, :) = kcl;
 table_1a(3, :) = V;
-table_1a(4, :) = Vd;
+table_1a(4, :) = ka;
+table_1a(5, :) = Vd;
 
 disp('q1a');
 disp(table_1a);
 
-%% 1b 1c
+%% 1b 1c 1e 1f
 
-table = zeros(5, 5, 2);
+table = zeros(5, 5, 4);
 % solve for 1b and 1c
-for i = 1:2
-    % determine which parameters to restriction
-    % [q, kcl, V, ka]
-    restrict = [1, 0, 0, mod(i, 2)];
+for i = 1:4 
+    % initialization of caffeineError arguments
+    restrict = [1, 0, 0, mod(i, 2)]; % if 1, restrict parameter
+    is10am = (i == 3 || i == 4); % if 1, implement 10am algo
+    if is10am
+        y0 = [0, 0, 175];
+    else
+        y0 = [0, 0, 310];
+    end
     %iterate through each subject
     for subject = 1:numel(V) 
         initial_guess_params = [0, kcl, V(subject), ka]; % initial guess
@@ -47,7 +55,8 @@ for i = 1:2
             y0, ...
             params, ...
             restrict, ...
-            initial_guess_params ...
+            initial_guess_params, ...
+            is10am ...
         );
         options = optimoptions( ... % use LM algo and hide displays
             'lsqnonlin', ...
@@ -71,9 +80,10 @@ end
 % assign respective tables and display
 table_1b = table(:, :, 1);
 table_1c = table(:, :, 2);
-
-disp('q1b');
-disp(table_1b);
-
-disp('q1c');
-disp(table_1c);
+table_1e = table(:, :, 3);
+table_1f = table(:, :, 4);
+% takes a hot minute
+disp('q1b'); disp(table_1b);
+disp('q1c'); disp(table_1c);
+disp('q1e'); disp(table_1e);
+disp('q1f'); disp(table_1f);
