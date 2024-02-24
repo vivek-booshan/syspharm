@@ -7,7 +7,7 @@ ka = p(4);
 dydt = zeros(3, 1); %column vector
 
 % 1 = caffeine in body (mg/L)
-% 2 = caffeine in degr (mg);
+% 2 = caffeine in degradation (mg);
 % 3 = caffeine in gut (mg)
 
 dydt(1) = q/V + ka*y(3)/V - kc*y(1);
