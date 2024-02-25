@@ -1,3 +1,6 @@
+%|||| WARNING | due to time constraints, 
+%|||||||||||||| this makes a 25 files for all combinations
+
 for subject = 1:subjects
     FILE_NAME=sprintf('subject%d_experimental', subject);
     writematrix([t_real' y_real(:, subject)], FILE_NAME);
