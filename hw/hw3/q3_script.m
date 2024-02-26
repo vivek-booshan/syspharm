@@ -1,27 +1,25 @@
 load_dose = 20;
 maintenance_dose = 5;
 Vd = 0.85;
-weights = linspace(3, 8, 5);
-clearances = linspace(50, 150, 5);
+step = 21;
+weights = linspace(3, 8, step);
+clearances = linspace(50, 150, step);
 ka = log(2) / (7/60);
 y0 = [0, 0, load_dose];
 [ww, cc] = meshgrid(weights, clearances); %skip nested for loop
 
-global_sens1 = zeros(5, 5);
-global_sens2 = zeros(5, 5);
-global_sens3 = zeros(5, 5);
+global_sens1 = zeros(step);
+global_sens2 = zeros(step);
+global_sens3 = zeros(step);
 for i = 1:numel(ww)
     p = [0, cc(i), ww(i)*Vd, ka];
     global_sens1(i) = global_sens(1, y0, p);
     global_sens2(i) = global_sens(2, y0, p);
     global_sens3(i) = global_sens(3, y0, p);
 end
-disp('1')
-disp(global_sens1);
-disp('2')
-disp(global_sens2);
-disp('3')
-disp(global_sens3);
+FILE_NAME = 'q3a'; writematrix(global_sens1, FILE_NAME);
+FILE_NAME = 'q3b'; writematrix(global_sens2, FILE_NAME);
+FILE_NAME = 'q3c'; writematrix(global_sens3, FILE_NAME);
 %%
 %%%% FUNCTIONS %%%%
 function auc = auc_first24(y0, parameters)
