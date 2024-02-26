@@ -18,16 +18,11 @@ table_abc(:, :, 1) = table_1a;
 table_abc(:, :, 2) = table_1b;
 table_abc(:, :, 3) = table_1c;
 
-% tiledlayout(5, 1);
 for i=1:3
-    % nexttile;
-    % hold on;
     for subject = 1:subjects
         subject_param = table_abc(1:end-1, subject, i);
         y0 = [0, 0, 310];
         [t, y] = ode45(@(t, y) CaffeineODE(t, y, subject_param), 1:1/60:14, y0);
-        % scatter(t_real + 1, y_real(:, subject), [], color(subject, :))
-        % plot(t, y(:, 1), Color=color(subject, :))
         FILE_NAME = sprintf('subject%dtable%s', subject, question(i));
         writematrix([t y(:, 1)], FILE_NAME);
     end
@@ -41,8 +36,6 @@ table_ef(:, :, 2) = table_1f;
 question = ['e', 'f'];
 
 for i=1:2
-    % nexttile;
-    % hold on;
     for subject= 1:subjects
         subject_param = table_ef(1:end-1, subject, i);
         y0 = [0, 0, 175];
@@ -50,8 +43,6 @@ for i=1:2
         y0 = y1(end, :);
         y0(end) = y0(end) + 310;
         [t2, y2] = ode45(@(t, y) CaffeineODE(t, y, subject_param), 1:1/60:14, y0);
-        % scatter(t_real+1, y_real(:, subject), [], color(subject, :));
-        % plot([t1; t2], [y1(:, 1); y2(:, 1)], Color=color(subject, :));
         FILE_NAME = sprintf('subject%dtable%s', subject, question(i));
         t = [t1(:, 1); t2(:, 1)];
         y = [y1(:, 1); y2(:, 1)];
