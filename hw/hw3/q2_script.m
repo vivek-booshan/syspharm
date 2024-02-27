@@ -1,9 +1,11 @@
+%%% REQUIRES q1_script to be run
+
 %% AUC for 14 hrs
 subjects = 5;
 
 AUC14HRS = zeros(5, 5);
 for subject = 1:subjects
-    p = table_1e(:, subject);
+    p = table_1f(:, subject);
     AUC14HRS(1, subject) = local_sens(1, 175*1.1, 310, p);
     AUC14HRS(2, subject) = local_sens(1, 175, 310*1.1, p);
     p_kcl = p; p_kcl(2) = p(2)*1.1; 
@@ -18,7 +20,7 @@ FILE_NAME = 'q2a'; writematrix(AUC14HRS, FILE_NAME);
 
 AUC1HRS = zeros(5, 5);
 for subject = 1:subjects
-    p = table_1e(:, subject);
+    p = table_1f(:, subject);
     AUC1HRS(1, subject) = local_sens(2, 175*1.1, 310, p);
     AUC1HRS(2, subject) = local_sens(2, 175, 310*1.1, p);
     p_kcl = p; p_kcl(2) = p(2)*1.1; 
@@ -34,7 +36,7 @@ FILE_NAME = 'q2b'; writematrix(AUC1HRS, FILE_NAME);
 COST = zeros(5, 5);
 for subject = 1:subjects
     y0 = [0, 0, 175];
-    p = table_1e(:, subjects);
+    p = table_1f(:, subjects);
     y_subject = y_real(:, subject); 
     COST(1, subject) = local_sens(3, 175*1.1, 310, p, t_real=t_real, y_real=y_subject);
     COST(2, subject) = local_sens(3, 175, 310*1.1, p, t_real=t_real, y_real=y_subject);

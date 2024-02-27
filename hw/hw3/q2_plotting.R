@@ -7,7 +7,7 @@ library(ggplot2)
 sensitivities = c('14hr AUC', '1hr AUC', 'Sum of Squares')
 colnames = rep(c(paste('subject', 1:5)))
 parameters = rep(c('D1', 'D2', 'kcl', 'Vd', 'ka'))
-
+questions = c('a', 'b', 'c')
 # make row 1 as col names
 header.true <- function(df) {
   names(df) <- as.character(unlist(df[1, ]))
