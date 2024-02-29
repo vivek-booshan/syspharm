@@ -1,6 +1,6 @@
 %|||| WARNING | due to time constraints, 
 %|||||||||||||| this makes a 25 files for all combinations
-
+subjects = 5;
 for subject = 1:subjects
     FILE_NAME=sprintf('subject%d_experimental', subject);
     writematrix([t_real' y_real(:, subject)], FILE_NAME);
@@ -8,11 +8,7 @@ end
 
 %%
 % q1abc
-clf;
-hold on;
-subjects = size(table_1a, 2);
 question = ['a', 'b', 'c'];
-color = get(gca, "colororder");
 table_abc = zeros(5, 5, 3);
 table_abc(:, :, 1) = table_1a;
 table_abc(:, :, 2) = table_1b;
