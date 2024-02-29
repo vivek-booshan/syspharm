@@ -2,17 +2,18 @@ load_dose = 20;
 maintenance_dose = 5;
 Vd = 0.85;
 step = 21;
-weights = linspace(3, 8, step);
-clearances = linspace(50, 150, step);
+weights = 0.45 * linspace(3, 8, step);
+V = Vd * weights;
+clearances = log(2) ./ linspace(50, 150, step);
 ka = log(2) / (7/60);
-y0 = [0, 0, load_dose];
-[ww, cc] = meshgrid(weights, clearances); %skip nested for loop
+y0 = [load_dose, 0, 0];
+[vv, cc] = meshgrid(V, clearances); %skip nested for loop
 
 global_sens1 = zeros(step);
 global_sens2 = zeros(step);
 global_sens3 = zeros(step);
-for i = 1:numel(ww)
-    p = [0, cc(i), ww(i)*Vd, ka];
+for i = 1:numel(vv)
+    p = [0, cc(i), vv(i), 0];
     global_sens1(i) = global_sens(1, y0, p);
     global_sens2(i) = global_sens(2, y0, p);
     global_sens3(i) = global_sens(3, y0, p);
@@ -37,12 +38,12 @@ function auc = auc_week(y0, parameters)
     for i=0:6 % woah, zero indexing and inclusive end??
         [t, y] = ode45( ...
             @(t, y) CaffeineODE(t, y, parameters), ...
-            i:1/10:(i+1), ...
+            i:1/24:(i+1), ...
             y0 ...
         );
         auc = auc + trapz(t, y(:, 1));
         y0 = y(end, :); 
-        y0(end) = y0(end) + 5;
+        y0(1) = y0(1) + 5;
     end
 end
 
@@ -54,7 +55,7 @@ function ctrough = ctrough(y0, parameters)
     );
     for i = 1:6
         y0 = y(end, :);
-        y0(end) = y0(end) + 5;
+        y0(1) = y0(1) + 5;
         [~, y] = ode45( ...
             @(t, y) CaffeineODE(t, y, parameters), ...
             i:1/10:(i+1), ...
