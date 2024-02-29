@@ -10,7 +10,7 @@ for (j in 1:5) {
   p = ggplot() + 
     labs(title=paste0('Gut Concentration using q1', questions[j])) + 
     theme_bw() +
-    scale_x_continuous(name = 'Time (hrs)', breaks=(seq(0, 14, 2))) +
+    scale_x_continuous(name = 'Time Since 10 am (hrs)', breaks=(seq(0, 14, 2))) +
     scale_y_continuous(name = 'Gut Concentration (mg/L)', breaks=(seq(0, 12, 1)))
   
   for (i in 1:5) {

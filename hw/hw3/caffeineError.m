@@ -46,7 +46,7 @@ function error = caffeineError( ...
     end
 
     error = zeros(size(t_measured));
-    [t, y] = ode45(@(t, y) CaffeineODE(t, y, p), t_measured, y0);
+    [t, y] = ode45(@(t, y) CaffeineODE(t, y, p), 0:1/10:14, y0);
     for j=1:length(t_measured)
         teval = abs(t - t_measured(j));
         [~, tindex] = min(teval);
