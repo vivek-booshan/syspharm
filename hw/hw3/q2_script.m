@@ -2,53 +2,54 @@
 
 %% AUC for 14 hrs
 subjects = 5;
-
+delta = 0.1;
+multiplier = 1 + delta;
 AUC14HRS = zeros(5, 5);
 for subject = 1:subjects
     p = table_1f(:, subject);
-    AUC14HRS(1, subject) = local_sens(1, 175*1.1, 310, p);
-    AUC14HRS(2, subject) = local_sens(1, 175, 310*1.1, p);
-    p_kcl = p; p_kcl(2) = p(2)*1.1; 
+    AUC14HRS(1, subject) = local_sens(1, 175*multiplier, 310, p);
+    AUC14HRS(2, subject) = local_sens(1, 175, 310*multiplier, p);
+    p_kcl = p; p_kcl(2) = p(2)*multiplier; 
     AUC14HRS(3, subject) = local_sens(1, 175, 310, p, p_kcl);
-    p_vd = p; p_vd(3) = p(3)*1.1;
+    p_vd = p; p_vd(3) = p(3)*multiplier;
     AUC14HRS(4, subject) = local_sens(1, 175, 310, p, p_vd);
-    p_ka = p; p_ka(4) = p(4)*1.1;
+    p_ka = p; p_ka(4) = p(4)*multiplier;
     AUC14HRS(5, subject) = local_sens(1, 175, 310, p, p_ka);
 end
 disp(AUC14HRS);
-FILE_NAME = 'q2a'; writematrix(AUC14HRS, FILE_NAME);
+% FILE_NAME = 'q2a'; writematrix(AUC14HRS, FILE_NAME);
 
 AUC1HRS = zeros(5, 5);
 for subject = 1:subjects
     p = table_1f(:, subject);
-    AUC1HRS(1, subject) = local_sens(2, 175*1.1, 310, p);
-    AUC1HRS(2, subject) = local_sens(2, 175, 310*1.1, p);
-    p_kcl = p; p_kcl(2) = p(2)*1.1; 
+    AUC1HRS(1, subject) = local_sens(2, 175*multiplier, 310, p);
+    AUC1HRS(2, subject) = local_sens(2, 175, 310*multiplier, p);
+    p_kcl = p; p_kcl(2) = p(2)*multiplier; 
     AUC1HRS(3, subject) = local_sens(2, 175, 310, p, p_kcl);
-    p_vd = p; p_vd(3) = p(3)*1.1;
+    p_vd = p; p_vd(3) = p(3)*multiplier;
     AUC1HRS(4, subject) = local_sens(2, 175, 310, p, p_vd);
-    p_ka = p; p_ka(4) = p(4)*1.1;
+    p_ka = p; p_ka(4) = p(4)*multiplier;
     AUC1HRS(5, subject) = local_sens(2, 175, 310, p, p_ka);
 end
 disp(AUC1HRS);
-FILE_NAME = 'q2b'; writematrix(AUC1HRS, FILE_NAME);
+% FILE_NAME = 'q2b'; writematrix(AUC1HRS, FILE_NAME);
 
 COST = zeros(5, 5);
 for subject = 1:subjects
     y0 = [0, 0, 175];
     p = table_1f(:, subjects);
     y_subject = y_real(:, subject); 
-    COST(1, subject) = local_sens(3, 175*1.1, 310, p, t_real=t_real, y_real=y_subject);
-    COST(2, subject) = local_sens(3, 175, 310*1.1, p, t_real=t_real, y_real=y_subject);
-    p_kcl = p; p_kcl(2) = p(2)*1.1; 
+    COST(1, subject) = local_sens(3, 175*multiplier, 310, p, t_real=t_real, y_real=y_subject);
+    COST(2, subject) = local_sens(3, 175, 310*multiplier, p, t_real=t_real, y_real=y_subject);
+    p_kcl = p; p_kcl(2) = p(2)*multiplier; 
     COST(3, subject) = local_sens(3, 175, 310, p, p_kcl, t_real=t_real, y_real=y_subject);
-    p_vd = p; p_vd(3) = p(3)*1.1;
+    p_vd = p; p_vd(3) = p(3)*multiplier;
     COST(4, subject) = local_sens(3, 175, 310, p, p_vd, t_real=t_real, y_real=y_subject);
-    p_ka = p; p_ka(4) = p(4)*1.1;
+    p_ka = p; p_ka(4) = p(4)*multiplier;
     COST(5, subject) = local_sens(3, 175, 310, p, p_ka, t_real=t_real, y_real=y_subject);
 end
 disp(COST);
-FILE_NAME = 'q2c'; writematrix(COST, FILE_NAME);
+% FILE_NAME = 'q2c'; writematrix(COST, FILE_NAME);
 
 %%%%%%%%%% FUNCTIONS %%%%%%%%%%%%
 function auc = auc14hrs(D1, D2, p)
