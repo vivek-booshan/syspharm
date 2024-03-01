@@ -1,10 +1,12 @@
+subjects = 5;
 abs_halflife = 7/60; %from question
 cl_halflife = 5; %from prompt
+
 ka = log(2) / abs_halflife;
 kcl = log(2) / cl_halflife;
-
 q=0;
 Vd = 0.6; % L / kg
+
 weights = [111, 128, 143, 197, 222]*0.45; %convert to kg
 V =  Vd * weights;
 
@@ -35,7 +37,7 @@ disp(table_1a);
 
 %% 1b 1c 1e 1f
 
-table = zeros(5, 5, 4);
+table = zeros(subjects, subjects, 4);
 % solve for 1b and 1c
 for i = 1:4 
     % initialization of caffeineError arguments
@@ -87,3 +89,47 @@ disp('q1b'); disp(table_1b);
 disp('q1c'); disp(table_1c);
 disp('q1e'); disp(table_1e);
 disp('q1f'); disp(table_1f);
+
+%% Q1g
+for subject = 1:subjects
+    FILE_NAME=sprintf('subject%d_experimental', subject);
+    writematrix([t_real' y_real(:, subject)], FILE_NAME);
+end
+
+% q1abc
+question = ['a', 'b', 'c'];
+table_abc = zeros(subjects, subjects, 3);
+table_abc(:, :, 1) = table_1a;
+table_abc(:, :, 2) = table_1b;
+table_abc(:, :, 3) = table_1c;
+
+for i=1:3
+    for subject = 1:subjects
+        subject_param = table_abc(1:end-1, subject, i);
+        y0 = [0, 0, 310];
+        [t, y] = ode45(@(t, y) CaffeineODE(t, y, subject_param), 1:1/60:14, y0);
+        FILE_NAME = sprintf('subject%dtable%s', subject, question(i));
+        writematrix([t y(:, 1)], FILE_NAME);
+    end
+end
+
+% q1ef
+table_ef = zeros(subjects, subjects, 2);
+table_ef(:, :, 1) = table_1e;
+table_ef(:, :, 2) = table_1f;
+question = ['e', 'f'];
+
+for i=1:2
+    for subject= 1:subjects
+        subject_param = table_ef(1:end-1, subject, i);
+        y0 = [0, 0, 175];
+        [t1, y1] = ode45(@(t, y) CaffeineODE(t, y, subject_param), 0:1/60:1, y0);
+        y0 = y1(end, :);
+        y0(end) = y0(end) + 310;
+        [t2, y2] = ode45(@(t, y) CaffeineODE(t, y, subject_param), 1:1/60:14, y0);
+        FILE_NAME = sprintf('subject%dtable%s', subject, question(i));
+        t = [t1(:, 1); t2(:, 1)];
+        y = [y1(:, 1); y2(:, 1)];
+        writematrix([t, y], FILE_NAME)
+    end
+end

@@ -12,12 +12,14 @@ y0 = [load_dose, 0, 0];
 global_sens1 = zeros(step);
 global_sens2 = zeros(step);
 global_sens3 = zeros(step);
+
 for i = 1:numel(vv)
     p = [0, cc(i), vv(i), 0];
     global_sens1(i) = global_sens(1, y0, p);
     global_sens2(i) = global_sens(2, y0, p);
     global_sens3(i) = global_sens(3, y0, p);
 end
+
 FILE_NAME = 'q3a'; writematrix(global_sens1, FILE_NAME);
 FILE_NAME = 'q3b'; writematrix(global_sens2, FILE_NAME);
 FILE_NAME = 'q3c'; writematrix(global_sens3, FILE_NAME);
