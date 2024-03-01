@@ -45,5 +45,5 @@ for (i in 1:3) {
     theme_minimal() + geom_tile() +
     scale_fill_distiller(name='Sensitivity', palette='Spectral')
   print(p)
-  
+  ggsave(paste0("q3", questions[i], ".png"))
 }
