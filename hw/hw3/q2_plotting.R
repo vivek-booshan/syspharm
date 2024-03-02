@@ -4,7 +4,7 @@ library(RColorBrewer)
 library(tidyr)
 library(ggplot2)
 
-sensitivities = c('14hr AUC', '1hr AUC', 'Sum of Squares')
+sensitivities = c('14hr AUC', 'AUC 1hr after 11', 'Sum of Squares')
 colnames = rep(c(paste('subject', 1:5)))
 parameters = rep(c('D1', 'D2', 'kcl', 'Vd', 'ka'))
 questions = c('a', 'b', 'c')
@@ -34,7 +34,7 @@ for (i in 1:3) {
   p = ggplot(data=sens_mat, aes(x=subject, y=parameters, fill=sens)) + 
     labs(title=paste('Local Sensitivity for', sensitivities[i])) +
     theme_minimal() + geom_tile() +
-    scale_fill_distiller(name='Sensitivity', palette='Spectral')
+    scale_fill_distiller(name='Sensitivity', palette='PiYG')
   print(p)
   ggsave(paste0("q2", questions[i], ".png"), bg="white")
 }
