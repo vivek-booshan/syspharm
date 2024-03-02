@@ -34,7 +34,7 @@ for (i in 1:3) {
   p = ggplot(data=sens_mat, aes(x=subject, y=parameters, fill=sens)) + 
     labs(title=paste('Local Sensitivity for', sensitivities[i])) +
     theme_minimal() + geom_tile() +
-    scale_fill_distiller(name='Sensitivity', palette='PiYG')
+    scale_fill_distiller(name='Sensitivity', palette='Spectral')
   print(p)
   ggsave(paste0("q2", questions[i], ".png"), bg="white")
 }
