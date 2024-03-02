@@ -11,7 +11,7 @@ for (j in 1:5) {
     labs(title=paste0('Gut Concentration using q1', questions[j])) + 
     theme_bw() +
     scale_x_continuous(name = 'Time Since 10 am (hrs)', breaks=(seq(0, 14, 2))) +
-    scale_y_continuous(name = 'Gut Concentration (mg/L)', breaks=(seq(0, 12, 1)))
+    scale_y_continuous(name = 'Gut Concentration (mg/L)', breaks=(seq(0, 14, 1)))
   for (i in 1:5) {
     subject_data = read.csv(
       paste0('subject', i, 'table', questions[j], '.txt'),
@@ -32,6 +32,6 @@ for (j in 1:5) {
     p = p + geom_point(data=real_data, aes(x=t, y=y), color=hex[i])
   }
   p = p + geom_line(data=data, aes(x=t, y=y, color=subject))
-  ggsave(paste0("q1", questions[j], ".png"), bg="white")
   print(p)
+  ggsave(paste0("q1", questions[j], ".png"), bg="white")
 }
