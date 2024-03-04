@@ -8,10 +8,10 @@ for (j in 1:5) {
   
   data = c() #init data frame
   p = ggplot() + 
-    labs(title=paste0('Gut Concentration using q1', questions[j])) + 
+    labs(title=paste0('Blood Concentration using q1', questions[j])) + 
     theme_bw() +
     scale_x_continuous(name = 'Time Since 10 am (hrs)', breaks=(seq(0, 14, 2))) +
-    scale_y_continuous(name = 'Gut Concentration (mg/L)', breaks=(seq(0, 14, 1)))
+    scale_y_continuous(name = 'Blood Concentration (mg/L)', breaks=(seq(0, 14, 1)))
   for (i in 1:5) {
     subject_data = read.csv(
       paste0('subject', i, 'table', questions[j], '.txt'),
