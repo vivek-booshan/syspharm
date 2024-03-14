@@ -36,3 +36,20 @@ stdev = [V_stdev, CL_stdev, ka_stdev, kCL_stdev];
 
 disp('stdev')
 disp(stdev);
+
+%% Q5
+
+load('WeightDistribs_10000.mat');
+assert(exist("Weights", "var"));
+q5allo = @(parameters) parameter_allometry(Weights, parameters);
+IIVfunc = @(stdev) exp(stdev .* randn(length(Weights), 1));
+
+simData_woIIV(:, 1) = q5allo(V_stdev);
+simData_woIIV(:, 2) = q5allo(CL_stdev);
+simData_woIIV(:, 3) = q5allo(ka_stdev);
+simData_woIIV(:, 4) = simData_woIIV(:, 2) ./ simData_woIIV(:, 1);
+
+simDataIIV(:, 1) = simData_woIIV(:, 1).* IIVfunc(V_stdev);
+simDataIIV(:, 2) = simData_woIIV(:, 2) .* IIVfunc(CL_stdev);
+simDataIIV(:, 3) = simData_woIIV(:, 3) .* IIVfunc(ka_stdev);
+simDataIIV(:, 4) = simDataIIV(:, 2) ./ simDataIIV(:, 1);
