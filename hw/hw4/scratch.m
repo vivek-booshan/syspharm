@@ -1,3 +1,5 @@
+%% Q1
+
 if ~exist('TapData', 'var')
     load('TapData.mat')
 end
@@ -19,6 +21,7 @@ disp('parameters')
 disp(V_popt)
 disp(CL_popt)
 disp(ka_popt)
+writematrix([V_popt; CL_popt; ka_popt], 'allometry_parameters.txt');
 
 %% Q3
 
@@ -48,8 +51,16 @@ simData_woIIV(:, 1) = q5allo(V_stdev);
 simData_woIIV(:, 2) = q5allo(CL_stdev);
 simData_woIIV(:, 3) = q5allo(ka_stdev);
 simData_woIIV(:, 4) = simData_woIIV(:, 2) ./ simData_woIIV(:, 1);
+writematrix([Weights simData_woIIV], "woIIV.txt");
 
-simDataIIV(:, 1) = simData_woIIV(:, 1).* IIVfunc(V_stdev);
-simDataIIV(:, 2) = simData_woIIV(:, 2) .* IIVfunc(CL_stdev);
-simDataIIV(:, 3) = simData_woIIV(:, 3) .* IIVfunc(ka_stdev);
-simDataIIV(:, 4) = simDataIIV(:, 2) ./ simDataIIV(:, 1);
+simData_IIV(:, 1) = simData_woIIV(:, 1).* IIVfunc(V_stdev);
+simData_IIV(:, 2) = simData_woIIV(:, 2) .* IIVfunc(CL_stdev);
+simData_IIV(:, 3) = simData_woIIV(:, 3) .* IIVfunc(ka_stdev);
+simData_IIV(:, 4) = simData_IIV(:, 2) ./ simData_IIV(:, 1);
+writematrix([Weights simData_IIV], "wIIV.txt");
+
+%% Q6
+% Requires Parallel Computing Toolbox
+q6
+
+
