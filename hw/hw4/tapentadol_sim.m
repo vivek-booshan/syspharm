@@ -1,5 +1,14 @@
-function outAUC = tapentadol_sim(V,CL,ka,bioF,D0,DoseFreq,TimeLen,FigVis); 
-%
+function outAUC = tapentadol_sim(V,CL,ka,bioF,D0,DoseFreq,TimeLen,FigVis) 
+arguments
+    V double
+    CL double
+    ka double
+    bioF double
+    D0 double
+    DoseFreq double
+    TimeLen double = 24
+    FigVis logical = 0
+end
 % This function runs one simulation of repeated tapentadol dosing
 %%
 % INPUTS
@@ -18,7 +27,7 @@ function outAUC = tapentadol_sim(V,CL,ka,bioF,D0,DoseFreq,TimeLen,FigVis);
 %
 % outAUC - AUC of central compartment concentration over 24 hrs - (mg/L)*hr
 
-TimeLen = 24; % hours
+% TimeLen = 24; % hours
 NumberOfDoses = floor(TimeLen/DoseFreq)-1 ; % don't count first dose for loop purposes
 
 options = odeset('MaxStep',5e-2, 'AbsTol', 1e-5,'RelTol', 1e-5,'InitialStep', 1e-2);
@@ -32,7 +41,7 @@ p.kCL = CL/V;
 p.ka = ka;
 p.F = bioF;
 
-[T1,Y1] = ode45(@tapentadol_eqns,[0:(1/60):DoseFreq],y0,options,p); % simulate for infusion time period
+[T1,Y1] = ode45(@tapentadol_eqns,0:(1/60):DoseFreq,y0,options,p); % simulate for infusion time period
 DrugIn = D0*ones(length(T1),1); % added dose
 y0 = Y1(end,:);   % use final timepoint values for next period initial timepoint
 temp2 = DrugIn(end);
@@ -42,7 +51,7 @@ temp2 = DrugIn(end);
 for i=1:NumberOfDoses
     % infusion period
     y0(2) = y0(2)+D0; % next dose
-    [T2,Y2] = ode45(@tapentadol_eqns,[DoseFreq*i:(1/60):(DoseFreq*(i+1))],y0,options,p);
+    [T2,Y2] = ode45(@tapentadol_eqns,DoseFreq*i:(1/60):(DoseFreq*(i+1)),y0,options,p);
     y0 = Y2(end,:);
     DrugIn = [DrugIn(1:length(DrugIn)-1); (temp2 + D0*ones(length(T2),1))] ;
     temp2 = DrugIn(end);
@@ -71,13 +80,13 @@ end
 
 % output figures to plot if desired; but for repeated calls, likely want to
 %   suppress the figures.
-if FigVis == 1
+if FigVis
     figure;
     plot(T1,Y1(:,1),'k');
     hold on;
     lgd = legend('Central');
     lgd.Location = 'best';
-    lgd.Title.String = ['Compartment'];
+    lgd.Title.String = 'Compartment';
     title(gca,'tapentadol Concentration')
     ylabel(gca,'Concentration (mg/L)')
     xlabel(gca,'time (hrs)')
@@ -87,7 +96,7 @@ if FigVis == 1
     hold on;
     lgd = legend('Peripheral');
     lgd.Location = 'best';
-    lgd.Title.String = ['Compartment'];
+    lgd.Title.String = 'Compartment';
     title(gca,'tapentadol Concentration')
     ylabel(gca,'Concentration (mg/L)')
     xlabel(gca,'time (hrs)')
