@@ -4,7 +4,7 @@ if ~exist('TapData', 'var')
     load('TapData.mat')
 end
 
-V_err = @(params) allometry_error(TapData.wt, TapData.V, params);
+V_err  = @(params) allometry_error(TapData.wt, TapData.V,  params);
 CL_err = @(params) allometry_error(TapData.wt, TapData.CL, params);
 ka_err = @(params) allometry_error(TapData.wt, TapData.ka, params);
 
@@ -13,7 +13,7 @@ options = optimoptions( ...
     'Algorithm', 'levenberg-marquardt', ...
     'Display', 'none' ...
 );
-V_popt = lsqnonlin(V_err, [1, 1], [], [], options);
+V_popt  = lsqnonlin(V_err,  [1, 1], [], [], options);
 CL_popt = lsqnonlin(CL_err, [1, 1], [], [], options);
 ka_popt = lsqnonlin(ka_err, [1, 1], [], [], options);
 
@@ -45,7 +45,7 @@ disp(stdev);
 load('WeightDistribs_10000.mat');
 assert(exist("Weights", "var"));
 q5allo = @(parameters) parameter_allometry(Weights, parameters);
-IIVfunc = @(stdev) exp(stdev .* randn(length(Weights), 1));
+IIVfunc = @(sigma) exp(sigma .* randn(length(Weights), 1));
 
 simData_woIIV(:, 1) = q5allo(V_stdev);
 simData_woIIV(:, 2) = q5allo(CL_stdev);
