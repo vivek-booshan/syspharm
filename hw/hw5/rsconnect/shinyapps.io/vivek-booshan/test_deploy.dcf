@@ -1,0 +1,12 @@
+name: test_deploy
+title: test_deploy
+username: vivek-booshan
+account: vivek-booshan
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11624450
+bundleId: 8447861
+url: https://vivek-booshan.shinyapps.io/test_deploy/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
