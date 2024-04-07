@@ -1,5 +1,6 @@
 library(shiny)
 library(ggplot2)
+library(plotly)
 
 hw2q1a_0 <- read.csv(
     "hw2q1a_infusion_0.csv",
@@ -85,14 +86,14 @@ function(input, output, session) {
     subset_a_list <- reactive({
         # returns closure, must extract to result
         result <- lapply(hw2q1a, function (dataset) {
-            subset(dataset, t >= input$min & t <= input$max)
+            subset(dataset, t >= input$time[1] & t <= input$time[2])
         })
         return(result)
     })
     
     subset_b_list <- reactive({
         result <- lapply(hw2q1b, function(dataset) {
-            subset(dataset, t >= input$min & t <= input$max)
+            subset(dataset, t >= input$time[1] & t <= input$time[2])
         })
         return(result)
     })
@@ -104,14 +105,14 @@ function(input, output, session) {
             for (i in 1:4) {
                 p <- geom_line_append(p, subset_a_list()[[i]], "h", infusion[i])
             }
-            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nm)')
         } else {
             for (i in 1:4) {
                 p <- geom_line_append(p, subset_b_list()[[i]], "h", infusion[i])
             }
-            p <- p + labs(color='infusion', x='time (hrs)', y='[D] (nm)')
         }
-
+        p <- p + labs(color="infusion (nmol/hr)", x="time (hrs)", y="[D] (nmol)", 
+                      title="Concentration of Free Heparin (H) Over Time") +
+            theme_bw()
         plotly_build(p)
     })
 
@@ -122,15 +123,19 @@ function(input, output, session) {
             for (i in 1:4) {
                 p <- geom_line_append(p, subset_a_list()[[i]], "p", infusion[i])
             }
-            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nm)')
+            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nmol)')
         } else {
             for (i in 1:4) {
                 p <- geom_line_append(p, subset_b_list()[[i]], "p", infusion[i])
             }
-            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nm)')
+            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nmol)')
         }
-        
-        plotly_build(p)
+        p <- p + labs(
+                color='infusion (nmol/hr)', 
+                x='time (hrs)', y = '[D] (nmol)', 
+                title="Concentration of Free Protamine (P) Over Time") +
+            theme_bw()
+        p
     })
     
     output$plot_hp <- renderPlotly({
@@ -140,15 +145,17 @@ function(input, output, session) {
             for (i in 1:4) {
                 p <- geom_line_append(p, subset_a_list()[[i]], "hp", infusion[i])
             }
-            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nm)')
         } else {
             for (i in 1:4) {
                 p <- geom_line_append(p, subset_b_list()[[i]], "hp", infusion[i])
             }
-            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nm)')
         }
-        
-        plotly_build(p)
+        p <- p + labs(
+            color='infusion (nmol/hr)', 
+            x='time (hrs)', y = '[D] (nmol)', 
+            title="Concentration of Heparine Protamine (HP) Complex Over Time") +
+            theme_bw()
+        p
     })
     
     output$plot_htot <- renderPlotly({
@@ -158,15 +165,17 @@ function(input, output, session) {
             for (i in 1:4) {
                 p <- geom_line_append(p, subset_a_list()[[i]], "htot", infusion[i])
             }
-            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nm)')
         } else {
             for (i in 1:4) {
                 p <- geom_line_append(p, subset_b_list()[[i]], "htot", infusion[i])
             }
-            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nm)')
         }
-        
-        plotly_build(p)
+        p <- p + labs(
+            color='infusion (nmol/hr)', 
+            x='time (hrs)', y = '[D] (nmol)', 
+            title="Concentration of Total Heparine (H + HP) Over Time") +
+            theme_bw()
+        p
     })
     
     output$plot_ptot <- renderPlotly({
@@ -176,15 +185,16 @@ function(input, output, session) {
             for (i in 1:4) {
                 p <- geom_line_append(p, subset_a_list()[[i]], "ptot", infusion[i])
             }
-            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nm)')
         } else {
             for (i in 1:4) {
                 p <- geom_line_append(p, subset_b_list()[[i]], "ptot", infusion[i])
             }
-            p <- p + labs(color='infusion', x='time (hrs)', y = '[D] (nm)')
         }
-        
-        plotly_build(p)
+        p <- p + labs(
+            color='infusion (nmol/hr)', x='time (hrs)', y = '[D] (nmol)', 
+            title="Concentration of Total Protamine (P + HP) Over Time") +
+            theme_bw()
+        p
     })
 }
 
