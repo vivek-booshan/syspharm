@@ -1,0 +1,18 @@
+function [out] = parameter_allometry(weight, parameters)
+    arguments (Input)
+        weight (:, 1) double
+        parameters struct
+    end
+    arguments (Output)
+        % V (:, 1) double % volume (L)
+        % cl (:, 1) double % clearance (L/hr)
+        % ka (:, 1) double % absorption (L/hr)
+    end
+    
+    
+
+    V = A .* (weight ./ 45).^D;
+    cl = B .* (weight ./ 45).^E;
+    ka = C * (weight ./ 45).^F;
+
+end
