@@ -7,8 +7,11 @@ classdef Patients < handle
         meanFG double = 5.20
         stdFG double = 0.583
         cutoffBMI double = 12
+        cutoffFG double = 3
         meanSimulatedBMI double
         stdSimulatedBMI double
+        meanSimulatedFG double
+        stdSimulatedFG double
     end
 
     methods
@@ -27,7 +30,7 @@ classdef Patients < handle
             end
         end
         
-        function [xdist] = getVirtualPopulation(obj)
+        function [xdist] = generateBMI(obj)
             % x = 10:0.5:60;
             % y = obj.normalPDF(x, obj.meanBMI, obj.stdBMI);
             rng(0, 'simdTwister');
@@ -43,6 +46,22 @@ classdef Patients < handle
             end
             obj.meanSimulatedBMI = mean(xtemp);
             obj.stdSimulatedBMI = std(xtemp);
+            xdist = xtemp;
+        end
+
+        function [xdist] = generateFG(obj)
+            rng(1, 'simdTwister');
+            xtemp = obj.stdFG .* randn(obj.num_patients, 1) + obj.meanFG;
+            a = length(xtemp(xtemp <= obj.cutoffFG));
+            i = 0; cycle = 1;
+            while a > 0
+                xtemp(xtemp <= obj.cutoffFG) = obj.stdFG .* randn(a, 1) + obj.meanFG;
+                a = length(xtemp(xtemp <= obj.cutoffFG));
+                cycle = cycle + 1;
+                i = i + 1;
+            end
+            obj.meanSimulatedFG = mean(xtemp);
+            obj.stdSimulatedFG = std(xtemp);
             xdist = xtemp;
         end
     end
