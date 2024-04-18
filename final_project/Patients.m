@@ -10,8 +10,8 @@ classdef Patients < handle
         cutoffFG double = 3
         meanSimulatedBMI double
         stdSimulatedBMI double
-        meanSimulatedFG double
-        stdSimulatedFG double
+        BMI (:, 1) double
+        FG (:, 1) double
     end
 
     methods
@@ -29,10 +29,8 @@ classdef Patients < handle
                 obj.stdFG = 2.24;
             end
         end
-        
-        function [xdist] = generateBMI(obj)
-            % x = 10:0.5:60;
-            % y = obj.normalPDF(x, obj.meanBMI, obj.stdBMI);
+
+        function generateBMI(obj)
             rng(0, 'simdTwister');
             xtemp = obj.stdBMI .* randn(obj.num_patients, 1) + obj.meanBMI;
             a = length(xtemp( xtemp <= obj.cutoffBMI)); 
@@ -46,29 +44,16 @@ classdef Patients < handle
             end
             obj.meanSimulatedBMI = mean(xtemp);
             obj.stdSimulatedBMI = std(xtemp);
-            xdist = xtemp;
+            obj.BMI = xtemp;
         end
 
-        function [xdist] = generateFG(obj)
-            rng(1, 'simdTwister');
-            xtemp = obj.stdFG .* randn(obj.num_patients, 1) + obj.meanFG;
-            a = length(xtemp(xtemp <= obj.cutoffFG));
-            i = 0; cycle = 1;
-            while a > 0
-                xtemp(xtemp <= obj.cutoffFG) = obj.stdFG .* randn(a, 1) + obj.meanFG;
-                a = length(xtemp(xtemp <= obj.cutoffFG));
-                cycle = cycle + 1;
-                i = i + 1;
-            end
-            obj.meanSimulatedFG = mean(xtemp);
-            obj.stdSimulatedFG = std(xtemp);
-            xdist = xtemp;
+        function generateFG(obj)
+            p = 0.564;
+            BMIdist_zval = (obj.BMI - obj.meanSimulatedBMI) / obj.stdSimulatedBMI;
+            FGdist_zval = p.*BMIdist_zval + sqrt(1 - p.^2).*randn(size(BMIdist_zval));
+            obj.FG = FGdist_zval*obj.stdFG + obj.meanFG;
         end
-    end
 
-     methods (Access = private)
-        function y = normalPDF(obj, x, mu, std)
-            y = 1/(std * sqrt(2*pi))*exp(-((x(:) - mu).^2)/(2*std^2));
-        end
     end
+    
 end
