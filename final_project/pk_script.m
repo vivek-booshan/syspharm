@@ -10,7 +10,7 @@ y0 = [0, 0, 0, 0];
 % weekly dosing regime
 dose = [2.5, 2.5, 2.5, 2.5, 5, 5, 5, 5, 7.5, 7.5, 7.5, 7.5, 10, 10, 10, 10];
 
-A, B, C, D, E = ndgrid(Vp, Vc, ka, CL, Q);
+[A, B, C, D, E] = ndgrid(Vp, Vc, ka, CL, Q);
 max = numel(A);
 
 gcp();
