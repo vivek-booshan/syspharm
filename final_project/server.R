@@ -21,7 +21,7 @@ function (input, output) {
     output$plot2 <- renderPlotly({
         p <- p() + 
             geom_line(aes(x=t, y=y2)) + 
-            labs(x="Time (Hrs)", y="Central Compartment (mg/0.5ml)", title="Tirzepatide Peripheral Compartment Concentration Over 12 Weeks")
+            labs(x="Time (Hrs)", y="Peripheral Compartment (mg/0.5ml)", title="Tirzepatide Peripheral Compartment Concentration Over 12 Weeks")
     })
     
     output$plot3 <- renderPlotly({
