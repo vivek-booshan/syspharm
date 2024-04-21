@@ -5,7 +5,7 @@ library(plotly)
 
 function (input, output) {
     data <- reactive({
-        FILE = paste0('output_', input$Vp, '_', input$Vc, '_', input$ka, '_', input$CL, '_', input$Q, '.csv')
+        FILE = paste0('data/output_', input$Vc, '_', input$Vp, '_', input$ka, '_', input$CL, '_', input$Q, '.csv')
         read.csv(FILE, header=FALSE, col.names=c("t", "y1", "y2", "y3", "y4"))
     })
     p <- reactive({
