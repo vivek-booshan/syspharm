@@ -1,7 +1,26 @@
+library(plotly)
+
 fluidPage(
-    #tags$head
+    tags$head(
+        tags$style(HTML(
+            "
+              .sidebar-scroll {
+                position: fixed;
+                top: 10;
+                height: 430px;
+                overflow-y: auto; /* Enable vertical scrolling */
+                width: 250px; /* Adjust width as needed */
+                padding: 20px; /* Adjust padding as needed */
+                background-color: #f9f9f9; /* Background color of the sidebar */
+                border-right: 1px solid #ddd; /* Add border for better separation */
+                z-index: 1000; /* Ensure the sidebar stays on top */
+              }
+             "
+        ))
+    ),
     titlePanel("Tirzepatide PK Model"),
     sidebarPanel(
+        class =  "sidebar-scroll",
         selectInput('Vp', "Select Vp (L)", 
             c(
                 "3.48" = "3.480000e+00",
@@ -36,7 +55,7 @@ fluidPage(
         selectInput("Q", "Select Q (L/hr)", 
             c(
                 "0.101" = "1.010000e-01",
-                "0.126" = "1.260000e-01",
+                "0.125" = "1.250000e-01",
                 "0.144" = "1.440000e-01"
             )
         ),
