@@ -7,7 +7,7 @@ fluidPage(
               .sidebar-scroll {
                 position: fixed;
                 top: 10;
-                height: 430px;
+                height: 585px;
                 overflow-y: auto; /* Enable vertical scrolling */
                 width: 250px; /* Adjust width as needed */
                 padding: 20px; /* Adjust padding as needed */
@@ -23,29 +23,30 @@ fluidPage(
         class =  "sidebar-scroll",
         h5("Below are the 5 parameters involved in the tirzepatide PK model.
            For each parameter, the Median and the Bounds of the 95% CI are shown."),
+        selectInput("Vc", "Select Vc (L)",
+                    choices= c(
+                        "LB     : 2.07" = "2.070000e+00",
+                        "Median : 2.48" = "2.480000e+00",
+                        "UB     : 2.98" = "2.980000e+00"
+                    ),
+                    selected="2.480000e+00"
+        ),
         selectInput('Vp', "Select Vp (L)", 
             c(
                 "LB : 3.48" = "3.480000e+00",
                 "Median : 3.91" = "3.910000e+00",
                 "UB : 4.17" = "4.170000e+00"
             ),
-            selected = "Median : 3.91"
+            selected = "3.910000e+00"
         ),
-        selectInput("Vc", "Select Vc (L)",
-            c(
-                "LB     : 2.07" = "2.070000e+00",
-                "Median : 2.48" = "2.480000e+00",
-                "UB     : 2.98" = "2.980000e+00"
-            ),
-            selected="Median : 2.48"
-        ),
+        
         selectInput("ka", "Select ka (1/hr)",
             c(
                 "LB     : 0.0287" = "2.870000e-02",
-                "Median : 0.0363" = "3.260000e-02",
+                "Median : 0.0363" = "3.630000e-02",
                 "UB     : 0.0448" = "4.480000e-02"
             ),
-            selected = "Median : 0.0363"
+            selected = "3.630000e-02"
         ),
         selectInput("CL", "Select CL (L/hr)",
             c(
@@ -53,7 +54,7 @@ fluidPage(
                 "Median : 0.0326" = "3.260000e-02",
                 "UB     : 0.0341" = "3.410000e-02"
             ),
-            selected = "Median : 0.0326"
+            selected = "3.260000e-02"
         ),
         selectInput("Q", "Select Q (L/hr)", 
             c(
@@ -61,8 +62,10 @@ fluidPage(
                 "Median : 0.125" = "1.250000e-01",
                 "UB     : 0.144" = "1.440000e-01"
             ),
-            selected = "Median : 0.125"
+            selected = "1.250000e-01"
         ),
+        h5("Upon user modification, the median value of all parameters 
+           will be graphed in pink for comparison.")
     ),
     mainPanel(
         fluidRow(
