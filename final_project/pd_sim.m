@@ -6,7 +6,7 @@ options = odeset('MaxStep',5e-2, 'AbsTol', 1e-5,'RelTol', 1e-5,'InitialStep', 1e
 %% FIRST DOSE
 y0 = [0 0 0 0 F0 0 H0]';
 p.Vc = Vc;
-p.Vp = Vp
+p.Vp = Vp;
 p.kCL = CL/Vc;
 p.k12 = Q/Vc;
 p.k21 = Q/Vp;
