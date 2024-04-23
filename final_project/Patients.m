@@ -86,6 +86,17 @@ classdef Patients < handle
 
     methods (Static)
         function p = pkParameters(Vc, Vp, ka, CL, Q, F)
+            % function that takes in pk parameter inputs and generates a struct 
+            % of all values
+            %
+            % Inputs
+            % Vc   single           : Central Volume Distribution (L)
+            % Vp   single           : Peripheral Volume Distribution (L)
+            % ka   single           : absorbance rate (1/hr)
+            % CL   single           : Clearance (L/hr)
+            % Q    single           : Intercompartmental Clearance (L/hr)
+            % F    single = 0.8     : Bioavailability
+
             arguments
                 Vc single % Central Volume Distribution (L)
                 Vp single % Peripheral Volume Distribution (L)
