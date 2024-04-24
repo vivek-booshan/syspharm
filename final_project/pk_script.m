@@ -21,7 +21,7 @@ max_ = numel(A);
 %     writematrix([t/168, y], sprintf('output_%d_%d_%d_%d_%d.csv', a, b, c, d, e));
 % end 
 
-%% Single Dose %%
+%% Single Dose (YAEL) %%
 dose = [2.5, 5, 7.5, 10];
 hold on;
 for i = 1:length(dose)
@@ -30,7 +30,7 @@ for i = 1:length(dose)
 end
 hold off;
 
-%% relative dose effect of dose skipping
+%% relative dose effect of dose skipping (YAEL)
 clf
 dose = ones(1, 16)*2.5;
 p = Patients.pkParameters(Vc(1), Vp(1), ka(1), CL(1), Q(1));
@@ -60,11 +60,6 @@ for i = 1:6
     plot(t, y(:, 1)/steady_max);
 end
 
-% nexttile; hold on;
-% dose_timing = (0:4)*168; dose_timing(2) = 216;
-% [t, y] = skipDose(dose_timing, steady_state_y0, p);
-% patch([0, 0, length(y), length(y), 0], [0.4, 1, 1, 0.4, 0.4], 'r', 'FaceAlpha', 0.2);
-% plot(t, y(:, 1)/steady_max);
 
 function [time, solution] = skipDose(dose_timing, y0, p)
     time = [];

@@ -14,7 +14,7 @@ reference_central_AUC = trapz(y(:, 1));
 reference_peripheral_AUC = trapz(y(:, 2));
 FILE_NAMES = dir(fullfile("data/", "*.csv"));
 
-%%% CENTRAL AUC
+%% AUC (YAEL)
 parfor i = 1:max_
     a = A(i); b = B(i); c = C(i); d = D(i); e = E(i);
     Vc_idx = string(find(Vc == a));
