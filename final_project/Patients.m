@@ -98,12 +98,12 @@ classdef Patients < handle
             % F    single = 0.8     : Bioavailability
 
             arguments
-                Vc single % Central Volume Distribution (L)
-                Vp single % Peripheral Volume Distribution (L)
-                ka single % absorbance rate (1/hr)
-                CL single % Clearance (L/hr)
-                Q single % Intercompartmental Clearance (L/hr)
-                F single = 0.8 % Bioavailability
+                Vc single = 2.48 % Central Volume Distribution (L)
+                Vp single = 3.91 % Peripheral Volume Distribution (L)
+                ka single = 0.0363 % absorbance rate (1/hr)
+                CL single = 0.0326 % Clearance (L/hr)
+                Q  single = 0.125 % Intercompartmental Clearance (L/hr)
+                F  single = 0.8 % Bioavailability
             end
             p = struct( ...
                 'Vc', Vc, 'Vp', Vp, 'ka', ka, 'CL', CL, 'Q', Q, 'F', F, ...
@@ -134,12 +134,12 @@ classdef Patients < handle
             % Outputs
             % p (struct) : struct of all inputs
             arguments
-                Vc single % Central Volume Distribution (L)
-                Vp single % Peripheral Volume Distribution (L)
-                ka single % absorbance rate (1/hr)
-                CL single % Clearance (L/hr)
-                Q single % Intercompartmental Clearance (L/hr)
-                F single = 0.8 % Bioavailability
+                Vc single = 2.48 % Central Volume Distribution (L)
+                Vp single = 3.91 % Peripheral Volume Distribution (L)
+                ka single = 0.0363 % absorbance rate (1/hr)
+                CL single = 0.0326 % Clearance (L/hr)
+                Q  single = 0.125 % Intercompartmental Clearance (L/hr)
+                F  single = 0.8 % Bioavailability
                 kDIS single = 0.0215 % FG disease progression rate (mM/wk)
                 kOFF single = 0.00306 % Offset rate (1/hr)
                 kOUT single = 0.00156 % Turnover rate const for HbA1c (1/hr)
