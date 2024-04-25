@@ -63,9 +63,9 @@ end
 
 
 for k = 1:length(Y1)
-    Y2(k)=Y1(k,5)-Y1(k,5)*Y1(k,6)
+    Y2(k)=Y1(k,5)-Y1(k,5)*Y1(k,6);
 end
 
-out1=T1
-out2=Y2
-out3=Y1(:,7)
+out1=T1;
+out2=Y2;
+out3=Y1(:,7);
