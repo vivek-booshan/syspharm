@@ -344,7 +344,7 @@ classdef Model < handle
             dydt(2) = p.k12*y(1) - p.k21*y(2);
             dydt(3) = -p.ka*y(3); 
             dydt(4) = (1-p.F)*p.ka*y(3) + p.kCL*y(1)*p.Vc;
-            dydt(5) = p.kDIS*y(5);
+            dydt(5) = p.kDIS;
             dydt(6) = p.kOFF*((1-p.PLAC-(p.Hlim/p.E0H)^(1/p.FPG))*y(1)/(y(1)+p.EC50)-y(6));
             dydt(7) = (p.kOUT*p.E0H*(y(5)-y(5)*y(6))^p.FPG/(p.E0G^p.FPG))-p.kOUT*y(7);
         end
