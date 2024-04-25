@@ -136,13 +136,14 @@ classdef Model < handle
         function p = pkParameters(Vc, Vp, ka, CL, Q, F)
             % function that takes in pk parameter inputs and generates a struct 
             % of all values
+            % See page 58 of https://www.accessdata.fda.gov/drugsatfda_docs/nda/2022/215866Orig1s000ClinPharmR.pdf
             %
             % Inputs
-            % Vc   single           : Central Volume Distribution (L)
-            % Vp   single           : Peripheral Volume Distribution (L)
-            % ka   single           : absorbance rate (1/hr)
-            % CL   single           : Clearance (L/hr)
-            % Q    single           : Intercompartmental Clearance (L/hr)
+            % Vc   single = 2.48    : Central Volume Distribution (L)
+            % Vp   single = 3.91    : Peripheral Volume Distribution (L)
+            % ka   single = 0.0363  : absorbance rate (1/hr)
+            % CL   single = 0.0326  : Clearance (L/hr)
+            % Q    single = 0.125   : Intercompartmental Clearance (L/hr)
             % F    single = 0.8     : Bioavailability
 
             arguments
@@ -158,6 +159,7 @@ classdef Model < handle
                 'kCL', CL / Vc, 'k12', Q/Vc, 'k21', Q/Vp ...
             );
         end
+
         function p = pdParameters(Vc, Vp, ka, CL, Q, F, kDIS, kOFF, kOUT, E0H, E0G, EC50, PLAC, Hlim, FPG)
             % function that takes in pd parameter inputs and generates a struct 
             % of all values
@@ -279,19 +281,11 @@ classdef Model < handle
                 p struct
                 y0 (1, 6)
                 dose (1, :)
-                %bodyweight
                 options.resolution (1, 1) double = 1
                 options.solver = @ode23s
                 options.options = []
             end
-            % Kin = 0.0797;
-            % Kout = 0.0797;
-            % placebo_FFM = 0.0205; placebo_FM = 0.0796;
-            % slope_FFM = 3.71e-5; slope_FM = 1.19e-4;
-            % 
-            % Kin_FFM = baseline_Kin_FFM - baseline_Kin_FFM * (placebo_FFM + slope_FFM * y(1));
-            % Kin_FM = baseline_Kin_FM - baseline_Kin_FM * (placebo_FM + slope_FM * y(1));
-
+            p.FFM = y0(5); p.FM = y0(6); % assign FFM and FM to p
             dose_count = length(dose);
             sim_len = options.resolution*168 + 1;
             time = zeros(dose_count*sim_len, 1); 
@@ -367,7 +361,7 @@ classdef Model < handle
             %
             % Outputs
             %   dydt (4x1 float) : 
-            %       [central, peripheral, absorbance, cumulative]
+            %       [central, peripheral, virtual, cumulative]
 
             dydt = zeros(4, 1);
             dydt(1) = p.F*p.ka*y(3)/p.Vc - p.kCL*y(1) - p.k12*y(1) + p.k21*y(2);
@@ -388,7 +382,7 @@ classdef Model < handle
             %
             % Outputs
             %   dydt (7x1 float) :
-            %           [ central, peripheral, absorbance, cumulative,
+            %           [ central, peripheral, virtual, cumulative,
             %             disease progression, offset, HbA1c]
 
             dydt = zeros(7, 1);
@@ -411,8 +405,16 @@ classdef Model < handle
             % numbers divided by 168 are to convert from weeks to hourly
             % units
             % unsure how to fix dydt(5) and dydt(6)
+            %
+            % Inputs
+            %   t (float) : dummy input to log timestep
+            %   y (6x1 float) 
+            %   p (struct) : pk Parameter struct
+            %
+            % Outputs
+            %    dydt (6x1 float) :
+            %            [ central, peripheral, virtual, cumulative, FFM, FM]
             dydt = zeros(6, 1);
-            
             baseline_Kin_FFM = p.FFM*0.0797/168; 
             baseline_Kin_FM = p.FM*0.0797/168;
             Kout = 0.0797/168;
