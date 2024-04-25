@@ -1,4 +1,4 @@
-%% PK
+%% Mass Balance PK
 p = pkParameters();
 y0 = zeros(1, 4);
 dose = [2.5, 2.5, 2.5, 2.5, 5, 5, 5, 5, 7.5, 7.5, 7.5, 7.5, 10, 10, 10, 10];
