@@ -35,7 +35,22 @@ xlabel('Time (weeks)');
 ylabel('Balance (mg)');
 legend('2.5 mg', '5 mg', '7.5 mg', '10 mg');
 
+%% individual CL effect on simulation %%
+p = Model.pkParameters();
+T2DM = Model(1000, 1);
+noT2DM = Model(1000, 0);
+T2DM.generateBW();
+noT2DM.generateBW();
+iCL_T2DM = p.CL * (T2DM.BW / 70).^0.8;
+iCL_noT2DM = p.CL * (T2DM.BW / 70 .^ 0.8);
 
+hold on;
+for i = 1:10
+    p = Model.pkParameters(2.48, 3.91, 0.0363, iCL_T2DM(i), 0.125, 0.8);
+    [t, y, ~] = Model.simulatePK(p, y0, dose, "solver", @ode45, "resolution", 30);
+    plot(t, y(:, 1));
+end
+hold off;
 %% relative dose effect of dose skipping (YAEL)
 clf
 dose = ones(1, 16)*2.5;

@@ -35,16 +35,22 @@ classdef Model < handle
         stdBMI double = 4.33
         meanFG double = 5.20
         stdFG double = 0.583
-        cutoffBMI double = 12
-        cutoffFG double = 3
-        meanSimulatedBMI double
-        stdSimulatedBMI double
-        BMI (:, 1) double
-        FG (:, 1) double
+        meanBW double = 79.5
+        stdBW double = 15.6
+        cutoffBMI double = 18.8
+        cutoffFG double = 3.3
+        cutoffBW double = 50.7
+        % meanSimulatedBMI double
+        % stdSimulatedBMI double
+        meanSimulatedBW double
+        stdSimulatedBW double
+        %BMI (:, 1) double
+        %FG (:, 1) double
+        BW (:, 1) double
     end
 
     methods
-        function obj = Patients(num_patients, T2DM)
+        function obj = Model(num_patients, T2DM)
             arguments
                 num_patients double %= 1000
                 T2DM logical %= 0
@@ -54,8 +60,13 @@ classdef Model < handle
             if obj.T2DM
                 obj.meanBMI = 29.7;
                 obj.stdBMI = 4.98;
+                obj.cutoffBMI = 20.2;
                 obj.meanFG = 9.62;
                 obj.stdFG = 2.24;
+                obj.cutoffFG = 3.7;
+                obj.meanBW = 86.2;
+                obj.stdBW  =17.2;
+                obj.cutoffBW = 56.6;
             end
         end
 
@@ -76,15 +87,52 @@ classdef Model < handle
             obj.BMI = xtemp;
         end
 
+        function generateBW(obj)
+            rng(0, 'simdTwister');
+            xtemp = obj.stdBW .* randn(obj.num_patients, 1) + obj.meanBW;
+            a = length(xtemp( xtemp <= obj.cutoffBW)); 
+            i = 0;
+            cycle = 1;
+            while a > 0
+                xtemp(xtemp <= obj.cutoffBW) = obj.stdBW .* randn(a, 1) + obj.meanBW;
+                a = length(xtemp(xtemp <= obj.cutoffBW));
+                cycle = cycle + 1;
+                i = i + 1;
+            end
+            obj.meanSimulatedBW = mean(xtemp);
+            obj.stdSimulatedBW = std(xtemp);
+            obj.BW = xtemp;
+        end
+        
         function generateFG(obj)
             p = 0.564;
             BMIdist_zval = (obj.BMI - obj.meanSimulatedBMI) / obj.stdSimulatedBMI;
             FGdist_zval = p.*BMIdist_zval + sqrt(1 - p.^2).*randn(size(BMIdist_zval));
             obj.FG = FGdist_zval*obj.stdFG + obj.meanFG;
         end
+        function list = generate(obj, mean, std, cutoff)
+            rng(0, 'simdTwister');
+            xtemp = std .* randn(obj.num_patients, 1) + mean;
+            a = length(xtemp( xtemp <= cutoff)); 
+            i = 0;
+            cycle = 1;
+            while a > 0
+                xtemp(xtemp <= cutoff) = std .* randn(a, 1) + mean;
+                a = length(xtemp(xtemp <= cutoff));
+                cycle = cycle + 1;
+                i = i + 1;
+            end
+
+            list = xtemp;
+            %mu = mean(list);
+            %sigma = mean(list);
+        end
+        
     end
 
     methods (Static)
+        
+
         function p = pkParameters(Vc, Vp, ka, CL, Q, F)
             % function that takes in pk parameter inputs and generates a struct 
             % of all values
@@ -203,7 +251,7 @@ classdef Model < handle
                 time(range) = t;
                 solution(range, :) = y;
                 balance(range) = -sum(dose(1:i)) + sum(y.*balance_coeff, 2);
-                balance(range) = balance(range)*1e-5;
+                % balance(range) = balance(range)*1e-5;
             end
         end
 
