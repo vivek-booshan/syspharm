@@ -10,8 +10,8 @@ y0 = zeros(1, 4);
 % weekly dosing regime
 dose = [2.5, 2.5, 2.5, 2.5, 5, 5, 5, 5, 7.5, 7.5, 7.5, 7.5, 10, 10, 10, 10];
 
-[A, B, C, D, E] = ndgrid(Vc, Vp, ka, CL, Q);
-max_ = numel(A);
+% [A, B, C, D, E] = ndgrid(Vc, Vp, ka, CL, Q);
+% max_ = numel(A);
 
 % gcp();
 % parfor i = 1:max_
@@ -23,12 +23,18 @@ max_ = numel(A);
 
 %% Single Dose (YAEL) %%
 dose = [2.5, 5, 7.5, 10];
+p = Model.pkParameters();
 hold on;
 for i = 1:length(dose)
-    [t, y] = Model.simulatePK(p, y0, dose(i));
-    plot(t, y(:, 1));
+    [t, y, b] = Model.simulatePK(p, y0, dose(i), "solver", @ode45, "resolution", 60);
+    plot(t/168, b);
 end
 hold off;
+title("Mass Balance for Single Dose");
+xlabel('Time (weeks)');
+ylabel('Balance (mg)');
+legend('2.5 mg', '5 mg', '7.5 mg', '10 mg');
+
 
 %% relative dose effect of dose skipping (YAEL)
 clf
@@ -39,27 +45,47 @@ steady_state_y0 = y(end, :);
 steady_dose = dose(1:4);
 steady_min = min(y(:, 1));
 steady_max = max(y(:, 1));
-tiledlayout(4, 2);
+t = tiledlayout(4, 2);
+title(t, 'Effect of Dose Skipping on Central Compartment');
+xlabel(t, "time (weeks)");
+ylabel(t, "Central Compartment Concentration (mg/L)");
 
 nexttile; hold on;
 [t, y] = Model.simulatePK(p, steady_state_y0, steady_dose);
-patch([0, 0, length(y), length(y), 0], [0.4, 1, 1, 0.4, 0.4], 'r', 'FaceAlpha', 0.2);
-plot(t, y(:, 1)/steady_max);
 
+patch([0, 0, length(y), length(y), 0], [0.53, 1, 1, 0.53, 0.53], 'r', 'FaceAlpha', 0.2);
+plot(t/168, y(:, 1)/steady_max);
+title("Standard Dosing")
+axis([0 4 0 1.3]);
+xline(1:3, '--');
+yticks(0:0.2:1.2);
+xticks([]);
 
 nexttile;  hold on;
 [t, y] = Model.simulatePK(p, steady_state_y0, [2.5, 0, 2.5, 2.5]);
-patch([0, 0, length(y), length(y), 0], [0.4, 1, 1, 0.4, 0.4], 'r', 'FaceAlpha', 0.2);
-plot(t, y(:, 1)/steady_max);
+patch([0, 0, length(y), length(y), 0], [0.53, 1, 1, 0.53, 0.53], 'r', 'FaceAlpha', 0.2);
+plot(t/168, y(:, 1)/steady_max);
+title("Skipped Dose");
+axis([0, 4, 0, 1.3]);
+xline(1:3, '--');
+yticks(0:0.2:1.2);
+xticks([]);
 
 for i = 1:6
     nexttile; hold on;
     dose_timing = (0:4)*168; dose_timing(2) = 168 + 24*i;
     [t, y] = skipDose(dose_timing, steady_state_y0, p);
-    patch([0, 0, length(y), length(y), 0], [0.4, 1, 1, 0.4, 0.4], 'r', 'FaceAlpha', 0.2);
-    plot(t, y(:, 1)/steady_max);
+    patch([0, 0, length(y), length(y), 0], [0.53, 1, 1, 0.53, 0.53], 'r', 'FaceAlpha', 0.2);
+    plot(t/168, y(:, 1)/steady_max);
+    title(sprintf("%d days late", i));
+    axis([0, 4, 0, 1.3]);
+    xline(1:3, '--');
+    yticks(0:0.2:1.2);
+    xticks([])
 end
 
+nexttile(7); xticks([1:4]);
+nexttile(8); xticks(1:4);
 
 function [time, solution] = skipDose(dose_timing, y0, p)
     time = [];

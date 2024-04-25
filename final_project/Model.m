@@ -203,6 +203,7 @@ classdef Model < handle
                 time(range) = t;
                 solution(range, :) = y;
                 balance(range) = -sum(dose(1:i)) + sum(y.*balance_coeff, 2);
+                balance(range) = balance(range)*1e-5;
             end
         end
 
@@ -321,10 +322,10 @@ classdef Model < handle
             %       [central, peripheral, absorbance, cumulative]
 
             dydt = zeros(4, 1);
-            dydt(1) = p.F * p.ka * y(3)/p.Vc - p.kCL * y(1) - p.k12 * y(1) + p.k21 * y(2);
-            dydt(2) = p.k12 * y(1) - p.k21 * y(2);
-            dydt(3) = -p.ka * y(3);
-            dydt(4) = (1 - p.F) * p.ka * y(3) + p.kCL * y(1) * p.Vc;
+            dydt(1) = p.F*p.ka*y(3)/p.Vc - p.kCL*y(1) - p.k12*y(1) + p.k21*y(2);
+            dydt(2) = p.k12*y(1) - p.k21*y(2);
+            dydt(3) = -p.ka*y(3);
+            dydt(4) = (1 - p.F)*p.ka*y(3) + p.kCL*y(1)*p.Vc;
         end
 
         function dydt = tirzepatidePD(t, y, p)
