@@ -158,7 +158,7 @@ classdef Model < handle
             );
         end
 
-        function [time, solution] = simulatePK(p, y0, dose, options)
+        function [time, solution, balance] = simulatePK(p, y0, dose, options)
             % Solves the stiff tirzepatide PK problem. Steps are calculated
             % with respect to 168 hour ranges specified by resolution.
             % (see Patients.tirzepatidePK documentation for more)
@@ -191,6 +191,8 @@ classdef Model < handle
             sim_len = options.resolution*168 + 1;
             time = zeros(dose_count*sim_len, 1); 
             solution = zeros(dose_count*sim_len, 4);
+            balance = zeros(dose_count*sim_len, 1);
+            balance_coeff = [p.Vc, p.Vc, 1, 1];
             for i = 1:dose_count
                 y0(3) = y0(3) + dose(i);
                 [t, y] = options.solver(@Model.tirzepatidePK, ...
@@ -200,6 +202,7 @@ classdef Model < handle
                 range = sim_len*(i-1)+1:sim_len*i;
                 time(range) = t;
                 solution(range, :) = y;
+                balance(range) = -sum(dose(1:i)) + sum(y.*balance_coeff, 2);
             end
         end
 
@@ -344,7 +347,7 @@ classdef Model < handle
             dydt(2) = p.k12*y(1) - p.k21*y(2);
             dydt(3) = -p.ka*y(3); 
             dydt(4) = (1-p.F)*p.ka*y(3) + p.kCL*y(1)*p.Vc;
-            dydt(5) = p.kDIS*y(5);
+            dydt(5) = p.kDIS;
             dydt(6) = p.kOFF*((1-p.PLAC-(p.Hlim/p.E0H)^(1/p.FPG))*y(1)/(y(1)+p.EC50)-y(6));
             dydt(7) = (p.kOUT*p.E0H*(y(5)-y(5)*y(6))^p.FPG/(p.E0G^p.FPG))-p.kOUT*y(7);
         end
