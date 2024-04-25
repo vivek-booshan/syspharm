@@ -16,8 +16,8 @@ max_ = numel(A);
 % gcp();
 % parfor i = 1:max_
 %     a = A(i); b = B(i); c = C(i); d = D(i); e = E(i);
-%     p = Patients.pkParameters(a, b, c, d, e);
-%     [t, y] = Patients.simulatePK(p, y0, dose);
+%     p = Model.pkParameters(a, b, c, d, e);
+%     [t, y] = Model.simulatePK(p, y0, dose);
 %     writematrix([t/168, y], sprintf('output_%d_%d_%d_%d_%d.csv', a, b, c, d, e));
 % end 
 
@@ -25,7 +25,7 @@ max_ = numel(A);
 dose = [2.5, 5, 7.5, 10];
 hold on;
 for i = 1:length(dose)
-    [t, y] = Patients.simulatePK(p, y0, dose(i));
+    [t, y] = Model.simulatePK(p, y0, dose(i));
     plot(t, y(:, 1));
 end
 hold off;
@@ -33,8 +33,8 @@ hold off;
 %% relative dose effect of dose skipping (YAEL)
 clf
 dose = ones(1, 16)*2.5;
-p = Patients.pkParameters(Vc(1), Vp(1), ka(1), CL(1), Q(1));
-[~, y] = Patients.simulatePK(p, y0, dose);
+p = Model.pkParameters(Vc(1), Vp(1), ka(1), CL(1), Q(1));
+[~, y] = Model.simulatePK(p, y0, dose);
 steady_state_y0 = y(end, :);
 steady_dose = dose(1:4);
 steady_min = min(y(:, 1));
@@ -42,13 +42,13 @@ steady_max = max(y(:, 1));
 tiledlayout(4, 2);
 
 nexttile; hold on;
-[t, y] = Patients.simulatePK(p, steady_state_y0, steady_dose);
+[t, y] = Model.simulatePK(p, steady_state_y0, steady_dose);
 patch([0, 0, length(y), length(y), 0], [0.4, 1, 1, 0.4, 0.4], 'r', 'FaceAlpha', 0.2);
 plot(t, y(:, 1)/steady_max);
 
 
 nexttile;  hold on;
-[t, y] = Patients.simulatePK(p, steady_state_y0, [2.5, 0, 2.5, 2.5]);
+[t, y] = Model.simulatePK(p, steady_state_y0, [2.5, 0, 2.5, 2.5]);
 patch([0, 0, length(y), length(y), 0], [0.4, 1, 1, 0.4, 0.4], 'r', 'FaceAlpha', 0.2);
 plot(t, y(:, 1)/steady_max);
 
@@ -66,7 +66,7 @@ function [time, solution] = skipDose(dose_timing, y0, p)
     solution = [];
     for i = 1:length(dose_timing)-1
         y0(3) = y0(3) + 2.5;
-        [t, y] = ode23s(@Patients.tirzepatidePK, dose_timing(i):1:dose_timing(i+1), y0, [], p);
+        [t, y] = ode23s(@Model.tirzepatidePK, dose_timing(i):1:dose_timing(i+1), y0, [], p);
         y0 = y(end, :);
         time = [time; t];
         solution = [solution; y];

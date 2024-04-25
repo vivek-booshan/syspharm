@@ -1,4 +1,4 @@
-classdef Patients < handle
+classdef Model < handle
     % Patients (class)
     %       Usage
     %           obj = Patients(num_patients = 1000, T2DM = 1)
@@ -193,7 +193,60 @@ classdef Patients < handle
             solution = zeros(dose_count*sim_len, 4);
             for i = 1:dose_count
                 y0(3) = y0(3) + dose(i);
-                [t, y] = options.solver(@Patients.tirzepatidePK, ...
+                [t, y] = options.solver(@Model.tirzepatidePK, ...
+                        168*(i-1):(1/options.resolution):168*i, y0, ...
+                        options.options, p);
+                y0 = y(end, :);
+                range = sim_len*(i-1)+1:sim_len*i;
+                time(range) = t;
+                solution(range, :) = y;
+            end
+        end
+
+        function [time, solution] = simulateWeightLoss(p, y0, dose, options)
+            % Solves the stiff tirzepatide PK problem. Steps are calculated
+            % with respect to 168 hour ranges specified by resolution.
+            % (see Patients.tirzepatidePK documentation for more)
+            % 
+            % Inputs
+            %   p       (struct): PK parameter fields
+            %   y0   (4x1 float): initial conditions
+            %                     (central, peripheral, absorbed, total)
+            %   dose (nx1 float): vector of weekly dose amount
+            %
+            % Inputs (Optional)
+            %   resolution (float) = 1 : (1/resolution) step size
+            %   solver (@func) = @ode23s : ode solver
+            %   options = [] : replace with odeset options if desired.
+            % 
+            % Outputs
+            %   time     (nx1 float) : time points
+            %   solution (nx4 float) : solutions
+
+            arguments
+                p struct
+                y0 (1, 6)
+                dose (1, :)
+                %bodyweight
+                options.resolution (1, 1) double = 1
+                options.solver = @ode23s
+                options.options = []
+            end
+            % Kin = 0.0797;
+            % Kout = 0.0797;
+            % placebo_FFM = 0.0205; placebo_FM = 0.0796;
+            % slope_FFM = 3.71e-5; slope_FM = 1.19e-4;
+            % 
+            % Kin_FFM = baseline_Kin_FFM - baseline_Kin_FFM * (placebo_FFM + slope_FFM * y(1));
+            % Kin_FM = baseline_Kin_FM - baseline_Kin_FM * (placebo_FM + slope_FM * y(1));
+
+            dose_count = length(dose);
+            sim_len = options.resolution*168 + 1;
+            time = zeros(dose_count*sim_len, 1); 
+            solution = zeros(dose_count*sim_len, 6);
+            for i = 1:dose_count
+                y0(3) = y0(3) + dose(i);
+                [t, y] = options.solver(@Model.bodyweight, ...
                         168*(i-1):(1/options.resolution):168*i, y0, ...
                         options.options, p);
                 y0 = y(end, :);
@@ -238,7 +291,7 @@ classdef Patients < handle
             solution = zeros(dose_count*sim_len, 7);
             for i = 1:16
                 y0(3) = y0(3) + dose(i);
-                [t, y] = options.solver(@Patients.tirzepatidePD, ...
+                [t, y] = options.solver(@Model.tirzepatidePD, ...
                         168*(i-1):(1/options.resolution):168*i, y0, ...
                         options.options, p);
                 y0 = y(end, :);
@@ -291,9 +344,44 @@ classdef Patients < handle
             dydt(2) = p.k12*y(1) - p.k21*y(2);
             dydt(3) = -p.ka*y(3); 
             dydt(4) = (1-p.F)*p.ka*y(3) + p.kCL*y(1)*p.Vc;
-            dydt(5) = p.kDIS;
+            dydt(5) = p.kDIS*y(5);
             dydt(6) = p.kOFF*((1-p.PLAC-(p.Hlim/p.E0H)^(1/p.FPG))*y(1)/(y(1)+p.EC50)-y(6));
             dydt(7) = (p.kOUT*p.E0H*(y(5)-y(5)*y(6))^p.FPG/(p.E0G^p.FPG))-p.kOUT*y(7);
+        end
+
+        function dydt = bodyweight(t, y, p)
+            % assumption made that without drug, there is a net zero change
+            % so K_in (kg/week) - K_out*weight = 0 by default
+            % this has been modeled by taking the K_out weight and
+            % multiplying by the initial FFM or FM weight to get baseline
+            % Kin
+            %
+            % numbers divided by 168 are to convert from weeks to hourly
+            % units
+            % unsure how to fix dydt(5) and dydt(6)
+            dydt = zeros(6, 1);
+            
+            baseline_Kin_FFM = p.FFM*0.0797/168; 
+            baseline_Kin_FM = p.FM*0.0797/168;
+            Kout = 0.0797/168;
+
+            placebo_FFM = 0.0205; 
+            placebo_FM = 0.0796;
+
+            slope_FFM = 3.71e-5; 
+            slope_FM = 1.19e-4;
+
+            Kin_FFM = baseline_Kin_FFM - baseline_Kin_FFM * (placebo_FFM + slope_FFM * y(1));
+            Kin_FM = baseline_Kin_FM - baseline_Kin_FM * (placebo_FM + slope_FM * y(1));
+
+            dydt(1) = p.F * p.ka * y(3)/p.Vc - p.kCL * y(1) - p.k12 * y(1) + p.k21 * y(2);
+            dydt(2) = p.k12 * y(1) - p.k21 * y(2);
+            dydt(3) = -p.ka * y(3);
+            dydt(4) = (1 - p.F) * p.ka * y(3) + p.kCL * y(1) * p.Vc;
+            dydt(5) = Kin_FFM - Kout*y(5);
+            dydt(6) = Kin_FM - Kout*y(6);
+            %dydt(5) = Kin_FFM*(1 - y(5)/sum(y(5:6))) - Kout*y(5);
+            %dydt(6) = Kin_FM*(1 - y(6)/sum(y(5:6))) - Kout*y(6);
         end
     end
 end
