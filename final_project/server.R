@@ -20,7 +20,7 @@ function (input, output) {
         p <- p() + 
             geom_line(data=median_data, aes(x=t, y=y1), color='pink') +
             geom_line(aes(x=t, y=y1)) +
-            labs(x="Time (Hrs)", y="Central Compartment (mg/0.5ml)", 
+            labs(x="Time (weeks)", y="Central Compartment (mg/L)", 
                  title="Tirzepatide Central Compartment Concentration Over 16 Weeks") +
             scale_x_continuous(breaks=seq(0, 16, by=4))
     })
@@ -29,7 +29,7 @@ function (input, output) {
         p <- p() + 
             geom_line(data=median_data, aes(x=t, y=y2), color='pink') +
             geom_line(aes(x=t, y=y2)) + 
-            labs(x="Time (Hrs)", y="Peripheral Compartment (mg/0.5ml)", 
+            labs(x="Time (weeks)", y="Peripheral Compartment (mg/L)", 
                  title="Tirzepatide Peripheral Compartment Concentration Over 16 Weeks") +
             scale_x_continuous(breaks=seq(0, 16, by=4))
     })
@@ -38,7 +38,7 @@ function (input, output) {
         p <- p() + 
             geom_line(data=median_data, aes(x=t, y=y4), color='pink') +
             geom_line(aes(x=t, y=y4)) + 
-            labs(x="Time (Hrs)", y="Cumulative Dose Concentration (mg/0.5ml)", 
+            labs(x="Time (weeks)", y="Cumulative Dose Concentration (mg/L)", 
                  title="Cumulative Dose Concentration Over 16 Weeks") +
             scale_x_continuous(breaks=seq(0, 16, by=4))
     })

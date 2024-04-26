@@ -9,30 +9,50 @@ Vp = [3.48, 3.91, 4.17];
 y0 = zeros(1, 4);
 % weekly dosing regime
 dose = [2.5, 2.5, 2.5, 2.5, 5, 5, 5, 5, 7.5, 7.5, 7.5, 7.5, 10, 10, 10, 10];
+p = Model.pkParameters();
+%% pk interactive data
+[A, B, C, D, E] = ndgrid(Vc, Vp, ka, CL, Q);
+max_ = numel(A);
 
-% [A, B, C, D, E] = ndgrid(Vc, Vp, ka, CL, Q);
-% max_ = numel(A);
+gcp();
+parfor i = 1:max_
+    a = A(i); b = B(i); c = C(i); d = D(i); e = E(i);
+    p = Model.pkParameters(a, b, c, d, e);
+    [t, y] = Model.simulatePK(p, y0, dose, "solver", @ode23s, "resolution", 1);
+    writematrix([t/168, y], sprintf('output_%d_%d_%d_%d_%d.csv', a, b, c, d, e));
+end 
 
-% gcp();
-% parfor i = 1:max_
-%     a = A(i); b = B(i); c = C(i); d = D(i); e = E(i);
-%     p = Model.pkParameters(a, b, c, d, e);
-%     [t, y] = Model.simulatePK(p, y0, dose);
-%     writematrix([t/168, y], sprintf('output_%d_%d_%d_%d_%d.csv', a, b, c, d, e));
-% end 
-
-%% Single Dose (YAEL) %%
+%% Single Dose %%
 dose = [2.5, 5, 7.5, 10];
 p = Model.pkParameters();
-hold on;
+t = tiledlayout(3, 2);
+title(t, "Compartment Concentration of Single Dose")
 for i = 1:length(dose)
-    [t, y, b] = Model.simulatePK(p, y0, dose(i), "solver", @ode45, "resolution", 60);
+    [t, y, b] = Model.simulatePK(p, y0, [dose(i), 0, 0, 0, 0], "solver", @ode45, "resolution", 60);
+    nexttile(1); hold on;
+    plot(t/168, y(:, 1));
+    nexttile(2); hold on;
+    plot(t/168, y(:, 2));
+    nexttile(3); hold on;
+    plot(t/168, y(:, 3));
+    nexttile(4); hold on;
+    plot(t/168, y(:, 4));
+    nexttile(5, [1 2]); hold on;
     plot(t/168, b);
 end
 hold off;
-title("Mass Balance for Single Dose");
-xlabel('Time (weeks)');
-ylabel('Balance (mg)');
+compartment = ["Central", "Peripheral", "Dose", "Cumulative"];
+for i = 1:4
+    nexttile(i);
+    title(sprintf("%s Compartment", compartment(i)));
+    xlabel('Time (weeks)');
+    ylabel('Concentration (mg/L)');
+    legend('2.5 mg', '5 mg', '7.5 mg', '10 mg');
+end
+nexttile(5)
+title("Mass Balance");
+ylabel('Mass (mg)');
+xlabel("Time (weeks");
 legend('2.5 mg', '5 mg', '7.5 mg', '10 mg');
 
 %% individual CL effect on simulation %%
@@ -51,7 +71,7 @@ for i = 1:10
     plot(t, y(:, 1));
 end
 hold off;
-%% relative dose effect of dose skipping (YAEL)
+%% relative dose effect of dose skipping
 clf
 dose = ones(1, 16)*2.5;
 p = Model.pkParameters(Vc(1), Vp(1), ka(1), CL(1), Q(1));
@@ -63,7 +83,7 @@ steady_max = max(y(:, 1));
 t = tiledlayout(4, 2);
 title(t, 'Effect of Dose Skipping on Central Compartment');
 xlabel(t, "time (weeks)");
-ylabel(t, "Central Compartment Concentration (mg/L)");
+ylabel(t, "Relative Concentration");
 
 nexttile; hold on;
 [t, y] = Model.simulatePK(p, steady_state_y0, steady_dose);
@@ -99,9 +119,35 @@ for i = 1:6
     xticks([])
 end
 
-nexttile(7); xticks([1:4]);
+nexttile(7); xticks(1:4);
 nexttile(8); xticks(1:4);
 
+%% steady state
+clf;
+dose = ones(1, 20);
+mag = [2.5, 5, 7.5, 10, 15];
+y0 = zeros(1, 4);
+hold on;
+for i = 1:length(mag)
+    [t, y] = Model.simulatePK(p, y0, dose*mag(i), "resolution", 15);
+    plot(t/168, y(:, 1));
+end
+patch([7, 7, t(end)/168, t(end)/168, 7], [0, 3, 3, 0, 0], 'r', 'FaceAlpha', 0.2);
+
+hold off;
+title("Central Compartment Concentration for 20 weeks");
+xlabel("time (weeks)"); 
+ylabel("Concentration (mg/L)");
+legend(string(mag) + " mg")
+
+%% weight loss
+clf;
+dose = ones(1, 52);
+mag = [2.5, 5, 7.5, 10, 15];
+hold on;
+
+dose = [dose, 10*ones(52-length(dose))];
+%% functions
 function [time, solution] = skipDose(dose_timing, y0, p)
     time = [];
     solution = [];
