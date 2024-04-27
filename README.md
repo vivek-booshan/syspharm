@@ -16,7 +16,7 @@ Currently, any other *.m or *.R scripts are simply class scripts for plotting re
 ## [PD Shiny App](https://vivek-booshan.shinyapps.io/shiny_pd/)
 - shiny_pd/
 - shiny_pd/server.R
-- ui.R
+- shiny_pd/ui.R
 
   
 ### TODO
