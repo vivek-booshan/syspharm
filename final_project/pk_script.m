@@ -18,7 +18,7 @@ gcp();
 parfor i = 1:max_
     a = A(i); b = B(i); c = C(i); d = D(i); e = E(i);
     p = Model.pkParameters(a, b, c, d, e);
-    [t, y] = Model.simulatePK(p, y0, dose, "solver", @ode23s, "resolution", 1);
+    [t, y] = Model.simulatePK(p, y0, dose);
     writematrix([t/168, y], sprintf('output_%d_%d_%d_%d_%d.csv', a, b, c, d, e));
 end 
 
