@@ -49,28 +49,28 @@ p <- BMI_pivot %>%
     )
 print(p)
 
-p <- BW_pivot %>%
-    plot_ly(type='violin') %>%
-    add_trace(
-        y = ~BW[BW_pivot$T2DM_SEX == 1],
-        split = ~T2DM[BW_pivot$T2DM_SEX == 1],
-        color = I("blue"),
-        box = list(visible = T),
-        meanline = list(visible=T)
-    ) %>%
-    add_trace(
-        y = ~BW[BW_pivot$T2DM_SEX == 0],
-        split = ~T2DM[BW_pivot$T2DM_SEX == 0],
-        color = I("pink"),
-        box = list(visible = T),
-        meanline = list(visible=T)
-    ) %>% 
-    layout(
-        showlegend=FALSE,
-        violinmode = 'group', 
-        yaxis=list(
-            title="Bodyweight (kg)"
-        ),
-        title = "Bodyweight Distributions by Sex for Virtual Patients"
-    )
-print(p)
+# p <- BW_pivot %>%
+#     plot_ly(type='violin') %>%
+#     add_trace(
+#         y = ~BW[BW_pivot$T2DM_SEX == 1],
+#         split = ~T2DM[BW_pivot$T2DM_SEX == 1],
+#         color = I("blue"),
+#         box = list(visible = T),
+#         meanline = list(visible=T)
+#     ) %>%
+#     add_trace(
+#         y = ~BW[BW_pivot$T2DM_SEX == 0],
+#         split = ~T2DM[BW_pivot$T2DM_SEX == 0],
+#         color = I("pink"),
+#         box = list(visible = T),
+#         meanline = list(visible=T)
+#     ) %>% 
+#     layout(
+#         showlegend=FALSE,
+#         violinmode = 'group', 
+#         yaxis=list(
+#             title="Bodyweight (kg)"
+#         ),
+#         title = "Bodyweight Distributions by Sex for Virtual Patients"
+#     )
+# print(p)

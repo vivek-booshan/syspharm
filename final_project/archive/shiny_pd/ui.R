@@ -25,7 +25,7 @@ fluidPage(
            the expected % change in your bodyweight for a 10mg dosing protocol"),
         sliderInput("bmi", "Patient BMI", min = 15, max = 50, value = 30, step=0.1),
         selectInput("sex", "Sex", choices=c("Male" = "male", "Female" = "female"), selected = "Male"),
-        selectInput("diabetes", "Type 2 Diabetes", choices=c("Yes" = "T2DM", "No" = "normal"), selected = "No")
+        selectInput("diabetes", "Type 2 Diabetes", choices=c("Yes" = "T2DM", "No" = "nonT2DM"), selected = "No")
     ),
     mainPanel(
         fluidRow(

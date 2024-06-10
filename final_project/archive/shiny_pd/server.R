@@ -10,14 +10,15 @@ function (input, output) {
         read.csv(
             file=FILE,
             header=FALSE,
-            col.names=c("t", "male_T2DM", "female_T2DM", "male_normal", "female_normal")
+            col.names=c("t", "male_T2DM", "female_T2DM", "male_nonT2DM", "female_nonT2DM")
         )
     })
     
-    observe({
-        print(which(BMI ==input$bmi))
-        print(paste0(input$sex, "_", input$diabetes))
-    })
+    # observe({
+    #     print(which(BMI ==input$bmi))
+    #     print(paste0(input$sex, "_", input$diabetes))
+    # })
+    
     output$plot <- renderPlotly({
         
         if (input$sex == "male") {
@@ -27,7 +28,7 @@ function (input, output) {
         }
         
         if (input$diabetes == "T2DM") {
-            oppdia = "normal"
+            oppdia = "nonT2DM"
         } else {
             oppdia = "T2DM"
         }
